@@ -182,10 +182,6 @@ def writeHtmlHeader():
 
 def writeHtmlBody(type):
     rows, hostname, ipaddr, builds = getDataFromJson(type)
-    # rows = getDataFromJson(type)[0]
-    # hostname = getDataFromJson(type)[1]
-    # ipaddr = getDataFromJson(type)[2]
-    # builds = getDataFromJson(type)[3]
     color = {0: '''bgcolor=""''', 1: '''bgcolor="#50D050"''', 2: '''bgcolor="#FF0000"'''}
 
     def isChanged(build):

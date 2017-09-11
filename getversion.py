@@ -15,15 +15,16 @@ import requests
 import telnetlib
 import re
 
-new_html = '/www/htdocs/versionlist.html'
-old_html = '/www/htdocs/versionlist_old.html'
-diff_html = '/www/htdocs/diff.html'
+base_dir = '/www/htdocs/'
+new_html = base_dir + 'versionlist.html'
+old_html = base_dir + 'versionlist_old.html'
+diff_html = base_dir + '/diff.html'
 json_file = '/tmp/pkgdict.json'
 base_jsonfile = '/tmp/pkgdict_base.json'
 base_jsonfile_tmp = '/tmp/pkgdict_base_tmp.json'
 report_date = time.strftime('%m/%d/%Y %H:%M:%S GMT', time.localtime(time.time()))
 backup_date = time.strftime('%Y%m%d%H', time.localtime(time.time()))
-backup_file = '/www/htdocs/history/versionlist_{0}.html'.format(backup_date)
+backup_file = base_dir + '/history/versionlist_{0}.html'.format(backup_date)
 cur_hour = time.localtime().tm_hour
 _lock = '/tmp/.lock'
 
@@ -31,12 +32,13 @@ PkgDict = {}
 status = {}
 rpmcmd = {}
 
+
 cf = ConfigParser.ConfigParser()
 cf.read(os.path.dirname(os.path.abspath(__file__)) + os.sep + 'hckconfig.properties')
 secs = cf.sections()
 
 
-# print secs
+#print secs
 
 
 class HealthCheck:
@@ -62,6 +64,7 @@ class HealthCheck:
             status[self.type] = 'NONONO'
             return 'NONONO'
 
+
     def Telnet(self):
         try:
             tn = telnetlib.Telnet(self.ip, self.hckurl)
@@ -80,7 +83,7 @@ def GetpkgInfo(type, server):
     hostname = ""
     ipaddr = ""
     for user, pwd in zip(['wbxbuilds'], ['P0w3rSupply!']):  # ['logs', 'wbxbuilds'], ['wbx@Aalogs', 'P0w3rSupply!'
-        # print user, pwd
+        #print user, pwd
         try:
             ssh.connect(server, username=user, password=pwd, timeout=30)
             stdin, stdout, stderr = ssh.exec_command(rpmcmd[type])
@@ -91,7 +94,7 @@ def GetpkgInfo(type, server):
         except:
             pass
 
-    # p1 = re.compile(r"Source RPM: (.+?) Size :") ##Source RPM Name
+
     p1 = re.compile(r"Name : (.+?) Relocations:(.+?) Version :(.+?) Vendor: \(none\) Release : (.+?) Build Date")
     p2 = re.compile(r"Build Date: (.+?) Install Date:")  ##Build Date
     p3 = re.compile(r"Install Date: (.+?) Build Host:")  ##Install Date
@@ -100,16 +103,16 @@ def GetpkgInfo(type, server):
     with open('/tmp/stdout') as fh:
         f = fh.read()
     # print "content of f:", f
-    # print re.findall(p1, f)
+    #print re.findall(p1, f)
     p1_ret = re.findall(p1, f)
-    print 'p1 :', p1_ret
+
     buildsinfo = ['{0}-{1}-{2}'.format(build[0].strip(), build[2].strip(), build[3].strip()) for build in p1_ret]
     # print re.findall(p2, f)
-    # print re.findall(p3, f)
+    #print re.findall(p3, f)
     rpmdata = zip(buildsinfo, re.findall(p2, f), re.findall(p3, f))
     print rpmdata
 
-    # PkgDict[type]={"build":[line.strip() for line in sorted(stdout.readlines())],"hostname":hostname,"ipaddr":ipaddr}
+
     PkgDict[type] = {"build": [line for line in sorted(rpmdata)], "hostname": hostname, "ipaddr": ipaddr}
     print PkgDict
 
@@ -125,21 +128,25 @@ def getDataFromJson(type, jsonfile=json_file):
         ipaddr = datadict["ipaddr"]
         build = datadict["build"]
 
-        return rows, hostname, ipaddr, build
+        return rows, hostname, ipaddr,build
 
 
 def timeConvert(s):
-    timestruct = time.strptime(s, "%a %b %d %H:%M:%S %Y")
+    try:
+        timestruct = time.strptime(s, "%a %b %d %H:%M:%S %Y")
+    except:
+        timestruct = time.strptime(s, "%a %d %b %Y %H:%M:%S %p GMT")
     timeformat = time.strftime("%Y-%m-%d %H:%M:%S", timestruct)
     timestamp = time.mktime(timestruct)
     return timeformat, timestamp
 
 
 def writeHtmlHeader():
+
     if os.path.isfile(new_html):
         try:
             shutil.copy(new_html, backup_file)
-            # os.rename(new_html,old_html)
+            os.rename(new_html, old_html)
             d = os.popen('find /www/htdocs/history -mtime +5 -exec rm -f {} \;')
         except:
             pass
@@ -170,27 +177,28 @@ def writeHtmlHeader():
                 <th>Service Status</th>
               </tr>
               '''.format('PRIMARY' if status.get('J2EE', 'NONONO') == 'OKOKOK' else 'GSB', report_date)
-        )
+)
 
 
 def writeHtmlBody(type):
-    rows = getDataFromJson(type)[0]
-    hostname = getDataFromJson(type)[1]
-    ipaddr = getDataFromJson(type)[2]
-    builds = getDataFromJson(type)[3]
+    rows, hostname, ipaddr, builds = getDataFromJson(type)
+    # rows = getDataFromJson(type)[0]
+    # hostname = getDataFromJson(type)[1]
+    # ipaddr = getDataFromJson(type)[2]
+    # builds = getDataFromJson(type)[3]
     color = {0: '''bgcolor=""''', 1: '''bgcolor="#50D050"''', 2: '''bgcolor="#FF0000"'''}
 
     def isChanged(build):
         old_build = (build[0] for build in getDataFromJson(type, base_jsonfile)[3])
-        # print "getdatafromjson is ",getDataFromJson (type, base_jsonfile)[3]
-        # print "old_build is", old_build, "new build is" ,build
+
+        #print "old_build is", old_build, "new build is" ,build
         if build not in old_build:
             return color[1]
         else:
             return color[0]
 
     def isRunning(type):
-        if status.get(type, '') == 'OKOKOK' or status.get(type, '') == '':
+        if status.get(type, '') == 'OKOKOK' or status.get(type, '')  == '' :
             return color[0]
         else:
             return color[2]
@@ -199,7 +207,7 @@ def writeHtmlBody(type):
 
     try:
         firstbuild = builds[0][0]
-        # print "firstbuild is ",firstbuild
+        #print "firstbuild is ",firstbuild
     except:
         firstbuild = []
 
@@ -212,14 +220,13 @@ def writeHtmlBody(type):
                 <td rowspan="{0}" align="center">{3}</td>
                 <td >{8}</td>
                 <td >{9}</td>
-                <td {4}>{5}</td>
+                <td {4}>{5}</td>        
                 <td rowspan="{0}" align="center" {6}>{7}</td>
              </tr>
             
-            '''.format(rows, type, hostname, ipaddr, isChanged(firstbuild), firstbuild, isRunning(type),
-                       status.get(type, ''),
-                       timeConvert(builds[0][1])[0], timeConvert(builds[0][2])[0])
-        )
+            '''.format(rows, type, hostname, ipaddr, isChanged(firstbuild), firstbuild, isRunning(type), status.get(type, ''),
+           timeConvert(builds[0][1])[0], timeConvert(builds[0][2])[0])
+)
     'If the length of build >1, write to file from the second entity'
     if len(builds) > 1:
         for build in builds[1:]:
@@ -230,10 +237,11 @@ def writeHtmlBody(type):
                       <tr>
                         <td >{0}</td>
                         <td >{1}</td>
-                        <td {2} >{3}</td>
+                        <td {2} >{3}</td>    
                       </tr>
                     '''.format(timeConvert(build[1])[0], timeConvert(build[2])[0], isChanged(build[0]), build[0])
-                )
+)
+
 
 
 def writeHtmlTail():
@@ -246,7 +254,7 @@ def writeHtmlTail():
             ''')
 
 
-def diffHtml(new, old):
+def diffHtml(new,old):
     def readfile(filename):
         with open(filename, 'rb') as f:
             text = f.read().splitlines()
@@ -261,13 +269,11 @@ def diffHtml(new, old):
     with open(diff_html, 'w+') as f:
         f.write(diff)
 
-
 def writeHtml():
-    writeHtmlHeader()
+    writeHtmlHeader ()
     for type in secs:
         writeHtmlBody(type)
-    writeHtmlTail()
-
+    writeHtmlTail ()
 
 def transferToCI():
     f = open(json_file)
@@ -277,28 +283,29 @@ def transferToCI():
     ret = json.dumps(cnvt, sort_keys=True, indent=4, separators=(',', ': '))
     # print 'Transfer content:',ret
 
-    url = 'http://10.224.57.221:8090/data/v1/buildDeployHistory/QA/packageList?appKey=qatest&appSecret=CntbrbG-aSTCHdYe3Pa8NrT7XtlMGEKV2NSlD9B_Xmk'
+    url = 'http://webexci.cisco.com/backend/data/v1/buildDeployHistory/QA/packageList?appKey=qapvc&appSecret=6o6Rh1Nvvow3HRWodrBX2uGa57XtaoZrhF0ecCCMB7g'
     headers = {'Content-Type': 'application/json;charset=UTF-8'}
     try:
         r = requests.post(url, headers=headers, data=ret)
         print 'response staus is', r.status_code
-        print 'response content is', r.content
+        print 'response content is',r.content
     except:
         print 'call api failed'
 
-
 if __name__ == "__main__":
     for type in secs:
-        hck = HealthCheck(type)
+        hck = HealthCheck (type)
         # print hck.ip,hck.rpmcmd,hck.hckurl
-        print type, hck.ip, hck.getStatus()
+        print type, hck.ip, hck.getStatus ()
     # print 'url status is %s' % status
 
-    for type in 'DPL', 'RA', 'TahoeTS', 'WebACD', 'TSP':
-        hck = HealthCheck(type)
+    for type in 'AppDBPatch', 'DPL', 'RA', 'TahoeTS', 'WebACD', 'TSP':
+        hck = HealthCheck (type)
         # print hck.ip,hck.rpmcmd,hck.hckurl
-        print type, hck.ip, hck.Telnet()
+        print type, hck.ip, hck.Telnet ()
     print 'status is %s' % status
+
+
 
     for type in secs:
         server = cf.get(type, 'ip')
@@ -317,7 +324,7 @@ if __name__ == "__main__":
 
 
     def copyfile(source, destination):
-        if not os.path.isfile(_lock):
+        if not os.path.isfile(_lock) :
             try:
                 shutil.copy(source, destination)
                 os.system('touch ' + _lock)
@@ -332,9 +339,12 @@ if __name__ == "__main__":
     else:
         os.system('rm -f ' + _lock)
 
+
+
     ###writehtml
     writeHtml()
 
-    diffHtml(new_html, old_html)
+    diffHtml(new_html,old_html)
+
 
     transferToCI()

@@ -131,6 +131,28 @@ def getDataFromJson(type, jsonfile=json_file):
         return rows, hostname, ipaddr,build
 
 
+def SendMsgToSparkRoom(msg=None):
+    sparkapi = 'https://api.ciscospark.com/v1/messages'
+    useragent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36'
+    headers = {'Content-Type': 'application/json;charset=UTF-8',
+               'Authorization': 'Bearer YjU2MzJhOTMtZDIzYS00MjMyLThmM2EtYzVjZjhhMjk4YjQwMTEzOWU4ZGUtNmFi'}
+    headers['User-Agent'] = useragent
+    roomId = '74bf8974-9b33-3892-b1f0-914bb42d465f'  # test room
+    # roomId = '28e3c750-6908-11e6-a747-2b856e15b09b' ##this is CMR Scrum Room
+    data = {"roomId": roomId, "text": msg, "markdown": "**%s**" % msg}
+    data = json.dumps(data)
+    # print data
+    try:
+        r = requests.post(sparkapi, headers=headers, data=data)
+        if r.status_code == 200:
+            print "send msg successfully"
+        print r.status_code
+
+    except Exception as e:
+        print 'send msg failed', e
+        pass
+
+
 def timeConvert(s):
     try:
         timestruct = time.strptime(s, "%a %b %d %H:%M:%S %Y")
@@ -237,6 +259,11 @@ def writeHtmlBody(type):
                       </tr>
                     '''.format(timeConvert(build[1])[0], timeConvert(build[2])[0], isChanged(build[0]), build[0])
 )
+
+    if status.get(type, '') != 'OKOKOK':
+        SendMsgToSparkRoom(
+            "[NONONO]{0}-{1} on hf3wd, Please Be Noticed! [link](http://pvc.qa.webex.com/versionlist.html)".format(type,
+                                                                                                                   ipaddr))
 
 
 

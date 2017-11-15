@@ -15,6 +15,9 @@ import requests
 import telnetlib
 import re
 
+'''get the build version and judge the service status'''
+
+
 base_dir = '/www/htdocs/'
 new_html = base_dir + 'versionlist.html'
 old_html = base_dir + 'versionlist_old.html'
@@ -22,7 +25,7 @@ diff_html = base_dir + '/diff.html'
 json_file = '/tmp/pkgdict.json'
 base_jsonfile = '/tmp/pkgdict_base.json'
 base_jsonfile_tmp = '/tmp/pkgdict_base_tmp.json'
-report_date = time.strftime('%m/%d/%Y %H:%M:%S GMT', time.localtime(time.time()))
+report_date = time.strftime('%m/%d/%Y %H:%M:%S', time.localtime(time.time()))
 backup_date = time.strftime('%Y%m%d%H', time.localtime(time.time()))
 backup_file = base_dir + '/history/versionlist_{0}.html'.format(backup_date)
 cur_hour = time.localtime().tm_hour
@@ -64,7 +67,6 @@ class HealthCheck:
             status[self.type] = 'NONONO'
             return 'NONONO'
 
-
     def Telnet(self):
         try:
             tn = telnetlib.Telnet(self.ip, self.hckurl)
@@ -76,7 +78,9 @@ class HealthCheck:
 
 
 def GetpkgInfo(type, server):
-    'Get Package info via the input paramter server type and server ip, return Package Info Dict'
+    '''Get Package info via the input paramter server type and server ip,
+    return Package Info Dict'''
+
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
@@ -93,7 +97,6 @@ def GetpkgInfo(type, server):
             break
         except:
             pass
-
 
     p1 = re.compile(r"Name : (.+?) Relocations:(.+?) Version :(.+?) Vendor: \(none\) Release : (.+?) Build Date")
     p2 = re.compile(r"Build Date: (.+?) Install Date:")  ##Build Date
@@ -277,7 +280,7 @@ def writeHtmlTail():
             ''')
 
 
-def diffHtml(new,old):
+def diffHtml(new, old):
     def readfile(filename):
         with open(filename, 'rb') as f:
             text = f.read().splitlines()
@@ -297,6 +300,7 @@ def writeHtml():
     for type in secs:
         writeHtmlBody(type)
     writeHtmlTail ()
+
 
 def transferToCI():
     f = open(json_file)

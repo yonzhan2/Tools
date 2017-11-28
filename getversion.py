@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 __author__ = 'YongZhang'
-__version__ = '1.0.0'
+__version__ = '2.0.0'
 # coding:utf-8
 import paramiko
 import os
@@ -14,30 +14,33 @@ import ConfigParser
 import requests
 import telnetlib
 import re
+import cPickle as pickle
 
-'''get the build version and judge the service status'''
-
-
-base_dir = '/www/htdocs/'
+# base_dir = '/www/htdocs/'
+base_dir = os.path.dirname(os.path.abspath(__file__)) + os.sep
+print base_dir
 new_html = base_dir + 'versionlist.html'
 old_html = base_dir + 'versionlist_old.html'
-diff_html = base_dir + '/diff.html'
-json_file = '/tmp/pkgdict.json'
-base_jsonfile = '/tmp/pkgdict_base.json'
-base_jsonfile_tmp = '/tmp/pkgdict_base_tmp.json'
-report_date = time.strftime('%m/%d/%Y %H:%M:%S', time.localtime(time.time()))
+diff_html = base_dir + 'diff.html'
+json_file = base_dir + 'pkgdict.json'
+base_jsonfile = base_dir + 'pkgdict_base.json'
+base_jsonfile_tmp = base_dir + 'pkgdict_base_tmp.json'
+report_date = time.strftime('%m/%d/%Y %H:%M:%S GMT', time.localtime(time.time()))
 backup_date = time.strftime('%Y%m%d%H', time.localtime(time.time()))
-backup_file = base_dir + '/history/versionlist_{0}.html'.format(backup_date)
+backup_file = base_dir + 'history/versionlist_{0}.html'.format(backup_date)
 cur_hour = time.localtime().tm_hour
-_lock = '/tmp/.lock'
+_lock = base_dir + '.lock'
 
 PkgDict = {}
 status = {}
 rpmcmd = {}
+failure_dict = {}
+max_failure = 3
+
 
 
 cf = ConfigParser.ConfigParser()
-cf.read(os.path.dirname(os.path.abspath(__file__)) + os.sep + 'hckconfig.properties')
+cf.read(base_dir + 'hckconfig.properties')
 secs = cf.sections()
 
 
@@ -67,6 +70,7 @@ class HealthCheck:
             status[self.type] = 'NONONO'
             return 'NONONO'
 
+
     def Telnet(self):
         try:
             tn = telnetlib.Telnet(self.ip, self.hckurl)
@@ -78,9 +82,7 @@ class HealthCheck:
 
 
 def GetpkgInfo(type, server):
-    '''Get Package info via the input paramter server type and server ip,
-    return Package Info Dict'''
-
+    'Get Package info via the input paramter server type and server ip, return Package Info Dict'
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
@@ -97,6 +99,7 @@ def GetpkgInfo(type, server):
             break
         except:
             pass
+
 
     p1 = re.compile(r"Name : (.+?) Relocations:(.+?) Version :(.+?) Vendor: \(none\) Release : (.+?) Build Date")
     p2 = re.compile(r"Build Date: (.+?) Install Date:")  ##Build Date
@@ -117,7 +120,7 @@ def GetpkgInfo(type, server):
 
 
     PkgDict[type] = {"build": [line for line in sorted(rpmdata)], "hostname": hostname, "ipaddr": ipaddr}
-    print PkgDict
+    #print PkgDict
 
 
 def getDataFromJson(type, jsonfile=json_file):
@@ -141,7 +144,7 @@ def SendMsgToSparkRoom(msg=None):
                'Authorization': 'Bearer YjU2MzJhOTMtZDIzYS00MjMyLThmM2EtYzVjZjhhMjk4YjQwMTEzOWU4ZGUtNmFi'}
     headers['User-Agent'] = useragent
     roomId = '74bf8974-9b33-3892-b1f0-914bb42d465f'  # test room
-    # roomId = '28e3c750-6908-11e6-a747-2b856e15b09b' ##this is CMR Scrum Room
+    #roomId = 'ac617a80-24cb-11e7-a0ed-cf98f532c071' ##this is T32 Firedrill Room
     data = {"roomId": roomId, "text": msg, "markdown": "**%s**" % msg}
     data = json.dumps(data)
     # print data
@@ -241,10 +244,10 @@ def writeHtmlBody(type):
                 <td rowspan="{0}" align="center">{3}</td>
                 <td >{8}</td>
                 <td >{9}</td>
-                <td {4}>{5}</td>        
+                <td {4}>{5}</td>
                 <td rowspan="{0}" align="center" {6}>{7}</td>
              </tr>
-            
+
             '''.format(rows, type, hostname, ipaddr, isChanged(firstbuild), firstbuild, isRunning(type), status.get(type, ''),
            timeConvert(builds[0][1])[0], timeConvert(builds[0][2])[0])
 )
@@ -258,16 +261,65 @@ def writeHtmlBody(type):
                       <tr>
                         <td >{0}</td>
                         <td >{1}</td>
-                        <td {2} >{3}</td>    
+                        <td {2} >{3}</td>
                       </tr>
                     '''.format(timeConvert(build[1])[0], timeConvert(build[2])[0], isChanged(build[0]), build[0])
 )
 
     if status.get(type, '') != 'OKOKOK':
-        SendMsgToSparkRoom(
-            "[NONONO]{0}-{1} on hf3wd, Please Be Noticed! [link](http://pvc.qa.webex.com/versionlist.html)".format(type,
-                                                                                                                   ipaddr))
+        # print getFailure(type)
+        failure = getFailure(type)['failure']
+        issend = getFailure(type)['issend']
+        if time.localtime().tm_hour not in (0, 4):
+            if issend != 'Y':
+                if failure < max_failure:
+                    SendMsgToSparkRoom(
+                        "[NONONO]{0}-{1} on hf3wd, Please Be Noticed! [link](http://pvc.qa.webex.com/versionlist.html)".format(
+                            type, ipaddr))
+                    saveFailure(type)
+                else:
+                    SendMsgToSparkRoom(
+                        'Exceeded the Times of Maximum Failure Notifications for {0}-{1}'.format(type, ipaddr))
+                    saveFailure(type, issend='Y')
+    else:
+        saveSuccess(type)
 
+
+def saveSuccess(type, issend='N'):
+    try:
+        pkobj = pickle.load(open('failure', 'rb'))
+        pkobj[type] = {'failure': 0, 'issend': issend}
+        failure_dict.update(pkobj)
+        pd = pickle.dump(failure_dict, open('failure', 'wb', True))
+    except Exception as e:
+        # print 'saveSuccess Failed ',e
+        pkobj = {}
+        pkobj[type] = {'failure': 0, 'issend': issend}
+        failure_dict.update(pkobj)
+        pd = pickle.dump(failure_dict, open('failure', 'wb', True))
+
+
+def saveFailure(type, issend='N'):
+    try:
+        pkobj = pickle.load(open('failure', 'rb'))
+        pkobj[type] = {'failure': pkobj[type].get('failure', 0) + 1, 'issend': issend}
+        failure_dict.update(pkobj)
+        pd = pickle.dump(failure_dict, open('failure', 'wb', True))
+    except Exception as e:
+        # print 'saveFailure failed ',e
+        pkobj = {}
+        pkobj[type] = {'failure': 1, 'issend': issend}
+        failure_dict.update(pkobj)
+        pd = pickle.dump(failure_dict, open('failure', 'wb', True))
+
+
+def getFailure(type, issend='N'):
+    try:
+        pkobj = pickle.load(open('failure', 'rb'))
+        return pkobj[type]
+    except Exception as e:
+        # print 'getFailure failed',e
+        return {'failure': 0, 'issend': issend}
 
 
 def writeHtmlTail():
@@ -280,7 +332,7 @@ def writeHtmlTail():
             ''')
 
 
-def diffHtml(new, old):
+def diffHtml(new,old):
     def readfile(filename):
         with open(filename, 'rb') as f:
             text = f.read().splitlines()
@@ -300,7 +352,6 @@ def writeHtml():
     for type in secs:
         writeHtmlBody(type)
     writeHtmlTail ()
-
 
 def transferToCI():
     f = open(json_file)
@@ -323,20 +374,21 @@ if __name__ == "__main__":
     for type in secs:
         hck = HealthCheck (type)
         # print hck.ip,hck.rpmcmd,hck.hckurl
-        print type, hck.ip, hck.getStatus ()
-    # print 'url status is %s' % status
+        print type, hck.ip, hck.getStatus()
+    #print 'url status is %s' % status
 
     for type in 'AppDBPatch', 'DPL', 'RA', 'TahoeTS', 'WebACD', 'TSP':
         hck = HealthCheck (type)
         # print hck.ip,hck.rpmcmd,hck.hckurl
-        print type, hck.ip, hck.Telnet ()
-    print 'status is %s' % status
+        print type, hck.ip, hck.Telnet()
+    #print 'status is %s' % status
+
 
 
 
     for type in secs:
         server = cf.get(type, 'ip')
-        # print server
+        print server
         GetpkgInfo(type, server)
 
     PkgDict_json = json.dumps(PkgDict, sort_keys=True, indent=4, separators=(',', ': '))

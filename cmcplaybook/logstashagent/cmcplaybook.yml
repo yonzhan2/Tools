@@ -1,0 +1,33 @@
+component: logstashagent
+
+variables:
+  pool: ccssq1
+  version: 5.6.9-181122
+
+tasks:
+
+  - name: "edit configuration for {{pool}}"
+    action: Config
+    pool: "{{pool}}" # if ignore this row, will use default
+    versionBuild: "{{version}}" # if ignore this row, will use default
+    changeStatus: approved
+    override:
+      mainService:
+        Pool: "{{configs/poolConfig.yml:poolConfig}}"
+        #EnableLog: true
+
+  - name: "deploy pool for {{pool}}"
+    action: Deploy
+    pool: "{{pool}}"                    # if ignore this row, will use default
+    versionBuild: "{{version}}"         # if ignore this row, will use default
+    #taskType: service_refresh
+    additional:
+      configuration: true
+      service: true
+      package: true
+      #boxTypeList:
+      #  - provisioner
+      #boxList:
+      # - name: cfgszpri101
+
+    

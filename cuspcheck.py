@@ -75,10 +75,14 @@ def checkStatus():
                 else:
                     status[cusp] = ret
                     return False
-    except Exception as e:
-        print(e)
+    except Exception, e:
+        print e
 
 
 for cusp in cusps:
     if not checkStatus():
-        sendmail()
+        pass
+        # sendmail()
+
+# time.sleep(30)
+# os.popen('rm -f *.png')

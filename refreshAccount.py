@@ -3,7 +3,7 @@ import urllib2
 import urllib
 import json
 
-__name__ = "sqtest_jiezha3"
+__name__ = "sqtest_sqdemo27u02"
 __password__ = "P@ss1234"
 
 

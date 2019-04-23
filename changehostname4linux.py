@@ -12,7 +12,7 @@ PASS = "pass"
 DBNAME = "vmdb"
 PORT = "3306"
 
-
+'''
 class GetData(object):
     def __init__(self):
         pass
@@ -30,7 +30,7 @@ class GetData(object):
         except MySQLdb.Error as e:
             print "Error %d: %s" % (e.args[0], e.args[1])
 
-
+'''
 class GetDataFromMongo(object):
     def __init__(self):
         pass
@@ -45,7 +45,7 @@ class GetDataFromMongo(object):
             return vmname
 
         except Exception as e:
-            print "Error is %s" % e
+            print("Error is %s" % e)
 
 
 def isIPAlive():
@@ -73,7 +73,7 @@ gdfm = GetDataFromMongo()
 timeout = 0
 while timeout <= 30:
     if isIPAlive():
-        print "IP is Alive"
+        print("IP is Alive")
         break
     else:
         time.sleep(3)
@@ -86,12 +86,12 @@ if not os.path.exists(r"/root/.changedhostname"):
     vmmacc = ':'.join(re.findall('..', '%012x' % uuid.getnode()))
     # vmmacc = "00:50:56:92:29:12"
     vmname = gdfm.getvminfo(vmmacc)
-    print "vmname is", vmname
+    print("vmname is", vmname)
     hostname, ipaddr = vmname.split('-')
     cmd = "sh vmconfig.sh {0 } {1}".format(hostname, ipaddr)
 
     if hostname:
-        print cmd
+        print(cmd)
         os.system(cmd)
         with open(r"/root/.changedhostname", 'w+') as f:
             f.write("Changed hostname {0} macc {1} done!".format(hostname, vmmacc))

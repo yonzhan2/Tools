@@ -6,10 +6,8 @@ import time
 import subprocess
 from subprocess import Popen, PIPE
 
-HOST = "192.168.254.100"
-
-'''
-USER = "test"
+HOST = "172.24.66.158"
+USER = "root"
 PASS = "pass"
 DBNAME = "vmdb"
 PORT = "3306"
@@ -30,9 +28,8 @@ class GetData(object):
             db.close()
 
         except MySQLdb.Error as e:
-            print "Error %d: %s" % (e.args[0], e.args[1])
-
-'''
+            print
+            "Error %d: %s" % (e.args[0], e.args[1])
 
 
 class GetDataFromMongo(object):
@@ -41,7 +38,7 @@ class GetDataFromMongo(object):
 
     def getvminfo(self, vmmacc):
         try:
-            client = pymongo.MongoClient("mongodb://{}:27017/".format(HOST))
+            client = pymongo.MongoClient("mongodb://{0}:27017/".format(HOST), connectTimeoutMS=60000)
             mydb = client["test"]
             mycoll = mydb["vminfo"]
             mydict = {"vmmacc": vmmacc}
@@ -49,8 +46,8 @@ class GetDataFromMongo(object):
             return vmname
 
         except Exception as e:
-            print("Error is %s" % e)
-
+            print
+            "Error is %s" % e
 
 
 def isIPAlive():
@@ -63,12 +60,23 @@ def isIPAlive():
         return False
 
 
+"""
+def getIP(vmname):
+    with open('failure','r') as f:
+        pattern = re.compile(r"{0} (.*)".format(vmname))
+        res = re.findall(pattern,f.read())
+        return res[0]
+
+gd = GetData()
+"""
+
 gdfm = GetDataFromMongo()
 
 timeout = 0
 while timeout <= 30:
     if isIPAlive():
-        print("IP is Alive")
+        print
+        "IP is Alive"
         break
     else:
         time.sleep(3)
@@ -76,14 +84,23 @@ while timeout <= 30:
 
 # cmd='netdom renamecomputer %COMPUTERNAME% /Newname "{}" /Force /REBoot:1'.format(newname)
 
-if not os.path.exists(r"C:\tools\agent\.changedhostname.flag"):
-    time.sleep(60)
+if not os.path.exists(r"/vmconfig/.changedhostname"):
+    time.sleep(3)
     vmmacc = ':'.join(re.findall('..', '%012x' % uuid.getnode()))
-    newname = gdfm.getvminfo(vmmacc)
-    cmd = '''wmic computersystem where caption='Win7-Image' rename "{}" '''.format(newname)
-    print(cmd)
-    if newname:
+    print
+    "vmmacc is ", vmmacc
+    vmname = gdfm.getvminfo(vmmacc)
+    print
+    "vmname is", vmname
+    hostname, ipaddr = vmname.split('-', 1)
+    ipaddr = ipaddr.strip('-ct74')
+    cmd = "sh /vmconfig/vmconfig.sh {0} {1}".format(hostname, ipaddr)
+
+    if hostname:
+        print
+        cmd
         os.system(cmd)
-        with open(r"C:\tools\agent\.changedhostname.flag", 'w+') as f:
-            f.write("Changed hostname {0} macc {1} done!".format(newname, vmmacc))
-        os.system("shutdown -r -t 0")
+        with open(r"/vmconfig/.changedhostname", 'w+') as f:
+            f.write("Changed hostname {0} macc {1} done!".format(hostname, vmmacc))
+        time.sleep(3)
+        os.system("reboot")

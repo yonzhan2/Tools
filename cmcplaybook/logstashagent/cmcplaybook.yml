@@ -1,4 +1,4 @@
-component: logstashagent
+component: appdjavaagent
 
 variables:
   pool: ccssq1
@@ -14,7 +14,7 @@ tasks:
     override:
       mainService:
         Pool: "{{configs/poolConfig.yml:poolConfig}}"
-        #EnableLog: true
+        EnableLog: true
 
   - name: "deploy pool for {{pool}}"
     action: Deploy

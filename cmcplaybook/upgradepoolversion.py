@@ -3,22 +3,29 @@ import os
 import time
 from multiprocessing import Pool, cpu_count
 from yaml import load
+import re
 
 # cmcurl = "csgcmc.qa.webex.com"
-cmcurl = "sjcmc.eng.webex.com"
+cmcurl = "sjcmc.dmz.webex.com"
 
 ###QA CMC headers
-# headers = {'Authorization': 'Basic Q01DUUFfQVBJX0hGQ0lfa2V5OjdlMGRhNmU4ODk1MzRkMjQ4N2IwZjI4MzQ0OWIwM2Q4='}
+#headers = {'Authorization': 'Basic Q01DUUFfQVBJX0hGQ0lfa2V5OjdlMGRhNmU4ODk1MzRkMjQ4N2IwZjI4MzQ0OWIwM2Q4='}
 
 ###SJ CMC headers
-headers = {'Authorization': 'Basic Q01DVVNBUElfa2V5OjQ4ZGJkZDcwNjkzNzRjMzhhMGMyNGIyMTcxMWQzYTA2'}
+headers = {'Authorization': 'Basic Q01DQVBJX0RNWl9rZXk6MGE1ZGJhYTFmY2E5NGVhZThiYTE4YzIzZDYyZmI3Yzg='}
+
+if re.search("csgcmc", cmcurl):
+    env = "qa"
+else:
+    env = "dmz"
+
 current_dir = os.path.dirname(__file__)
 start = time.time()
 
 
 class GetData():
-    def __init__(self):
-        self.data = load(open('cmcmaping_dmz.yml'))
+    def __init__(self, cmcmapping_file):
+        self.data = load(open(cmcmapping_file))
         self.component = self.data.get('component')
 
     def getcomponent(self):
@@ -27,6 +34,7 @@ class GetData():
 
     def getpool(self, component):
         pools = self.component.get(component).get('pools')
+        #pools = [pool for pool in pools if  re.search("hf|sz|ak", pool)]
         return pools
 
     def getversion(self, component):
@@ -48,7 +56,7 @@ def generateconfig(component, poolname, service_version, build_no="0100"):
         return "Filure with %s-%s " % ret + " on " + (component, poolname)
 
 
-def deploywithplaybook(component, poolname, service_version, build_no="0100", boxlist=''):
+def upgradewithplaybook(component, poolname, service_version, build_no="0100", boxlist=''):
     if boxlist:
         namelist = ''.join(["    - name: %s \n" % name for name in boxlist])
         print(namelist)
@@ -99,17 +107,18 @@ tasks:
     filename = os.path.join(current_dir, '%s_%s.yml' % (component, poolname))
     with open(filename, 'w+') as f:
         f.write(playbook)
-    time.sleep(10)
+    time.sleep(5)
     files = {'playbook': open(filename, 'rb')}
     req = requests.post(url, files=files, headers=headers)
-    # os.remove(filename)
+    os.remove(filename)
     return req.text
 
 
 if __name__ == "__main__":
-    getdata = GetData()
+    getdata = GetData(f'cmcmapping_{env}.yml')
     print(getdata.component)
     result = []
+
     for component_name in getdata.getcomponent():
 
         service_version, build_no = getdata.getversion(component_name).split('-')
@@ -122,7 +131,7 @@ if __name__ == "__main__":
             generateconfig(component_name, pname, service_version, build_no)
             print("Deploy pool for %s-%s " % (component_name, pname))
             result.append(
-                pool.apply_async(func=deploywithplaybook, args=(component_name, pname, service_version, build_no)))
+                pool.apply_async(func=upgradewithplaybook, args=(component_name, pname, service_version, build_no)))
 
         pool.close()
         pool.join()

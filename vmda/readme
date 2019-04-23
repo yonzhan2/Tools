@@ -1,0 +1,4 @@
+##add below two lines to /etc/rc.d/rc.local
+
+sh /vmconfig/precheck.sh > /vmconfig/precheck.log 2>&1
+python /vmconfig/changehostname.py > /vmconfig/changehostname.log 2>&1

@@ -1,0 +1,170 @@
+---
+component:
+  #    appdbpatch:
+  #      pools:
+  #        - szhf
+  #      version:
+  #        39.4.0-0000
+  #      boxlist:
+  #        - szhf: CONFIGDB_PRI.HF.oradbqasvr001
+  #
+  #    j2ee:
+  #      pools:
+  #        #- hf1
+  #        - jhf2
+  #        - jhf3
+  #        - gjhf1
+  #        - jsz1
+  #      version:
+  #        39.4.0-0000
+  #
+  #    meetingjoinservice:
+  #      pools:
+  #        #- hf1
+  #        - jhf2
+  #        - jhf3
+  #        - gjhf1
+  #        - jsz1
+  #      version:
+  #        2.12.0-0100
+  #
+  #    meetingregistryservice:
+  #      pools:
+  #        - vsz1
+  #      version:
+  #        1.30.0-0100
+  #
+  #    clustermrs:
+  #      pools:
+  #        - hf1
+  #        - jhf2
+  #        - jhf3
+  #        - gjhf1
+  #        - jsz1
+  #      version:
+  #        1.23.0-0100
+  #
+  #    webng:
+  #      pools:
+  #        - jhf2
+  #        - jhf3
+  #        - gjhf1
+  #      version:
+  #        1.18.0-0100
+  #
+  #    reminder:
+  #      pools:
+  #        - rhf1
+  #        - grhf1
+  #        - rhf2
+  #      version:
+  #        3.32.0-0000
+  #
+  #    authentication:
+  #      pools:
+  #        - wahf1
+  #        - wahf2
+  #        - wasz1
+  #        - wahf3
+  #        - waak1
+  #      version:
+  #        2.24.0-0100
+  #
+  #    superadmin:
+  #      pools:
+  #        - cfgsz1
+  #      version:
+  #        39.4.0-0000
+  #
+  #    eureka:
+  #      pools:
+  #        - ehf3
+  #        - eghf
+  #        - ehf2
+  #        - ed2hz
+  #        - ed9st
+  #      version:
+  #        6.4.0-0000
+
+  mmp:
+    pools:
+      - msz1
+      - gmhf1
+      - mhf9
+      - mhf9_hz
+      - m19st
+    version:
+      6.1.0-0000
+
+#    nbr:
+#      pools:
+#        - nsz2
+#        - gnhf1
+#      version:
+#        4.7.0-0000
+#
+#    tahoe:
+#      pools:
+#        - tsz1
+#        - tsz2
+#        - gthf1
+#        - gthf2
+#      version:
+#        5.4.0-0000
+#
+#    tpgw:
+#      pools:
+#        - vhf1
+#      version:
+#        6.4.0-0000
+#
+##    cms:
+##      pools:
+##        - tsz1
+##      version:
+##        3.3.0-0000
+#
+#    givr:
+#      pools:
+#        - tsz1
+#        - gthf1
+#      version:
+#        3.4.0-0000
+#
+#    xmlapi:
+#      pools:
+#        - xhf1
+#        - gxhf1
+#        - xhf2
+#      version:
+#        39.4.0-0000
+#
+#    gla:
+#      pools:
+#        - vsz1
+#      version:
+#        4.3.0-0000
+
+#    csp:
+#      pools:
+#        - cspsz1
+#        - gcsphf1
+#      version:
+#        1.4.0-0000
+#
+#    globalpageservice:
+#      pools:
+#        - gpsz1
+#      version:
+#        39.3.0-0100
+
+#  signservice:
+#    pools:
+#      - jhf3
+#    version:
+#      1.0.0-0100
+#  tsp:
+#    pools:
+#      - pt1
+#    version:
+#      3.21.0-0001

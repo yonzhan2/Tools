@@ -991,57 +991,244 @@ deldict = dict()
 
 import threading
 import time
-
+from pprint import pprint
 import requests
 
-cmcurl = "csgcmc.qa.webex.com"
+# cmcurl = "csgcmc.qa.webex.com"
+cmcurl = "sjcmc.eng.webex.com"
 
 ###QA CMC headers
-headers = {'Authorization': 'Basic Q01DUUFfQVBJX0hGQ0lfa2V5OjdlMGRhNmU4ODk1MzRkMjQ4N2IwZjI4MzQ0OWIwM2Q4='}
+# headers = {'Authorization': 'Basic Q01DUUFfQVBJX0hGQ0lfa2V5OjdlMGRhNmU4ODk1MzRkMjQ4N2IwZjI4MzQ0OWIwM2Q4='}
+
+###SJ CMC headers
+headers = {'Authorization': 'Basic Q01DVVNBUElfa2V5OjQ4ZGJkZDcwNjkzNzRjMzhhMGMyNGIyMTcxMWQzYTA2'}
 
 current_dir = os.path.dirname(__file__)
 
 
-def deploywithplaybook(component, poolname, service_version, build_no=0100):
-    playbook = '''component: %s
-
-variables:
-  pool: %s
-  version: %s-%s
-
-tasks:
-
-- name: "register box in {{pool}}"
-  action: RegisterBox
-  pool: "{{pool}}"
-  versionBuild: "{{version}}"
-  boxList:
-  - name: mhf9mcs12b
-    ip: 10.224.23.55
-    boxType: mmpmcs
-  - name: mhf9mcs12c
-    ip: 10.224.23.56
-    boxType: mmpmcs
-  - name: mhf9mcs12d
-    ip: 10.224.23.57
-    boxType: mmpmcs
-  - name: mhf9mcs12e
-    ip: 10.224.23.58
-    boxType: mmpmcs
-  - name: mhf9mcs12f
-    ip: 10.224.23.59
-    boxType: mmpmcs    
-    ''' % (component, poolname, service_version, build_no)
-
-    url = "https://%s/cmc/api/playbook/" % cmcurl
-    filename = os.path.join(current_dir, 'mmpplaybook_%s.yml' % poolname)
-    with open(filename, 'w+') as f:
-        f.write(playbook)
-    files = {'playbook': open(filename, 'rb')}
-    req = requests.post(url, files=files, headers=headers)
-    # os.remove(filename)
-    print req.text
+def getIP(component, pool):
+    url = 'https://%s/cmc/api/sitBoxList/%s/?pool=%s&ignore_owner=yes' % (cmcurl, component, pool)
+    req = requests.get(url, headers=headers)
+    res = req.json()
+    rows = res.get("rows")
+    # print(res)
+    for row in rows:
+        yield row["ip"]
 
 
-if __name__ == "__main__":
-    deploywithplaybook('mmp', 'mhf9', '5.4.0', '0000')
+# if __name__ == "__main__":
+#     for ip in getIP("j2ee","jsq1"):
+#         print ip
+#
+# def fun():
+#     l = []
+#     for i in range(20):
+#         yield i
+#
+# if __name__ == '__main__':
+#     for x in fun():
+#         print(x)
+
+# def fun():
+#     for i in range(20):
+#         x=yield i
+#         print('good',x)
+#
+# if __name__ == '__main__':
+#     a=fun()
+#     for i in range(30):
+#         x=a.next()
+#         print("x=",x)
+# import types
+# def fab(max):
+#     n,a,b = 0,0,1
+#     while n < max:
+#         yield b
+#         a , b = b, a + b
+#         n = n + 1
+#
+# for n in fab(5):
+#     print n,
+#
+# def read_file(fpath):
+#    BLOCK_SIZE = 1024
+#    with open(fpath, 'rb') as f:
+#        while True:
+#            block = f.read(BLOCK_SIZE)
+#            if block:
+#                print block
+#            else:
+#                return
+#
+#
+# read_file('getversion.py')
+# for i in read_file('getversion.py'):
+#     print i,
+#     import  time
+#     time.sleep(3)
+#
+# from retrying import retry
+# url ="http://10.224.89.58:1801/webex/apachepolltom.php?wd=hf2wd&type=self1"
+#
+# @retry(stop_max_attempt_number=3,wait_fixed=200)
+# def getdata(url):
+#     try:
+#         req = requests.get(url)
+#         ret = req.content
+#         print ret
+#     except Exception as e:
+#         assert False, e
+#
+#     return True
+#
+# print getdata(url)
+# from pprint import pprint
+# from yaml import load
+#
+# data = load(open('cmcplaybook/install_msi.yml'))
+# pprint(data)
+#
+#
+# import re
+# #s="Name : WBXmcc Relocations: /opt/webex/mmp Version : 6.0.0 Vendor: (none) Release : 5485 Build Date: Sat 22 Mar 2019 12:58:05 AM GMT Install Date: Fri 22 Mar 2019 04:33:56 AM GMT Build Host: ed124cc06738 Group : Applications/Communications Source RPM: WBXmcc-6.0.0-5485.src.rpm Size : 36676218 License: Cisco Software License 1.0 Signature : RSA/SHA1, Fri 22 Mar 2019 01:27:30 AM GMT, Key ID 952e62c3230c0099 URL : http://www.cisco.com/ Summary : rpmgen-generated image Description : Packaging information: date=Thu Mar 21 17:58:04 PDT 2019 hostname=ed124cc06738 HOME=/home/ccatgbld FROM=/cctg/workingDirectory/official_WebEx_Servers_main_webex-mmp_i386_CentOS6_9_32_2991482_201903211745/webex-mmp/config/rpm/WBXmcc pwd=/cctg/workingDirectory/official_WebEx_Servers_main_webex-mmp_i386_CentOS6_9_32_2991482_201903211745/webex-mmp/build/rpm uid=50293(ccatgbld) gid=50293(ccatgbld) groups=50293(ccatgbld)"
+# #s="Name : WBXmcc Version : 6.0.0 Release : 5431 Architecture: x86_64 Install Date: Thu 21 Mar 2019 10:47:11 AM GMT Group : Applications/Communications Size : 53857756 License : Cisco Software License 1.0 Signature : RSA/SHA1, Mon 18 Mar 2019 03:36:30 AM GMT, Key ID 952e62c3230c0099 Source RPM : WBXmcc-6.0.0-5431.src.rpm Build Date : Mon 18 Mar 2019 02:51:01 AM GMT Build Host : ed5f9f5122c9 Relocations : /opt/webex/mmp URL : http://www.cisco.com/ Summary : rpmgen-generated image Description : Packaging information: date=Sun Mar 17 19:51:01 PDT 2019 hostname=ed5f9f5122c9 HOME=/home/ccatgbld FROM=/cctg/workingDirectory/official_WebEx_Servers_main_webex-mmp_x86_64_CentOS7_2981326_201903171936/webex-mmp/config/rpm/WBXmcc pwd=/cctg/workingDirectory/official_WebEx_Servers_main_webex-mmp_x86_64_CentOS7_2981326_201903171936/webex-mmp/build/rpm uid=50293(ccatgbld) gid=50293(ccatgbld) groups=50293(ccatgbld)"
+# #s='''WBXappdb.T33 Relocations: /opt/webex/package/WBXappdb.T33-39.3.0 Version : 39.3.0 Vendor: (none) Release : 50 Build Date: Wed 27 Mar 2019 03:46:24 AM GMT Install Date: Thu 28 Mar 2019 04:21:27 AM GMT Build Host: cctg-ci-lnx227.cisco.com Group : Applications/Communications Source RPM: WBXappdb.T33-39.3.0-50.src.rpm Size : 80662 License: Cisco Software License 1.0 Signature : (none) URL : http://www.cisco.com/ Summary : rpmgen-generated image Description : Packaging information: date=Tue Mar 26 20:46:23 PDT 2019 hostname=cctg-ci-lnx227.cisco.com HOME=/home/ccatgbld FROM=/spare/workspace/official_Train_Appdb_main_webex-db-application-patch_3002767_201903262045/webex-db-application-patch/T39.3 pwd=/spare/workspace/official_Train_Appdb_main_webex-db-application-patch_3002767_201903262045/webex-db-application-patch/build uid=50293(ccatgbld) gid=50293(ccatgbld) groups=50293(ccatgbld)'''
+# s=''' Name : WBXpagecommon Relocations: /opt/webex/package/WBXpagecommon Version : 39.3.0 Vendor: (none) Release : 127 Build Date: Wed Mar 27 23:54:17 2019 Install Date: Thu Mar 28 04:32:29 2019 Build Host: 3e206370d9d9 Group : Applications/Communications Source RPM: WBXpagecommon-39.3.0-127.src.rpm Size : 81997934 License: Cisco Software License 1.0 Signature : RSA/SHA1, Wed Mar 27 23:55:07 2019, Key ID 952e62c3230c0099 URL : http://www.cisco.com/ Summary : rpmgen-generated image Description : Packaging information: JAVA_HOME=/cctg/artcache/Java/openjdk_x64/1.8.0.121 date=Wed Mar 27 16:54:16 PDT 2019 hostname=3e206370d9d9 HOME=/home/ccatgbld FROM=/cctg/workingDirectory/official_Train_Web_39.3.0_pagecommon_3004780_201903271640/webex-web-applications-build/build/linux/../../../STAGING/Deliverable pwd=/cctg/workingDirectory/official_Train_Web_39.3.0_pagecommon_3004780_201903271640/webex-web-applications-build/rpm uid=50293(ccatgbld) gid=50293(ccatgbld) groups=50293(ccatgbld)
+# Name : WBXpage.T32L Relocations: /opt/webex/package/WBXpage.T32L Version : 32.25.0 Vendor: (none) Release : 57 Build Date: Wed Mar 27 16:29:44 2019 Install Date: Wed Mar 27 23:43:59 2019 Build Host: a8528d927bc9 Group : Applications/Communications Source RPM: WBXpage.T32L-32.25.0-57.src.rpm Size : 255474701 License: Cisco Software License 1.0 Signature : RSA/SHA1, Wed Mar 27 16:33:49 2019, Key ID 952e62c3230c0099 URL : http://www.cisco.com/ Summary : rpmgen-generated image Description : Packaging information: JAVA_HOME=/cctg/artcache/Java/openjdk_x64/1.8.0.121 date=Wed Mar 27 09:29:42 PDT 2019 hostname=a8528d927bc9 HOME=/home/ccatgbld FROM=/cctg/workingDirectory/official_Train_Web_32.25.0.oneversion_T32L_page_3004253_201903270900/webex-web-applications-build/build/linux/../../../STAGING/Deliverable pwd=/cctg/workingDirectory/official_Train_Web_32.25.0.oneversion_T32L_page_3004253_201903270900/webex-web-applications-build/rpm uid=50293(ccatgbld) gid=50293(ccatgbld) groups=50293(ccatgbld)
+# Name : WBXadmin Relocations: /opt/webex/package/WBXadmin Version : 6.3.0 Vendor: (none) Release : 181 Build Date: Wed Mar 27 23:48:14 2019 Install Date: Thu Mar 28 04:31:40 2019 Build Host: bcffab781475 Group : Applications/Communications Source RPM: WBXadmin-6.3.0-181.src.rpm Size : 75725545 License: Cisco Software License 1.0 Signature : RSA/SHA1, Wed Mar 27 23:49:27 2019, Key ID 952e62c3230c0099 URL : http://www.cisco.com/ Summary : rpmgen-generated image Description : Packaging information: date=Wed Mar 27 16:48:13 PDT 2019 hostname=bcffab781475 HOME=/home/ccatgbld FROM=/cctg/workingDirectory/official_WebEx_WebServices_main_webex-web-wbxadmin_3004782_201903271640/webex-web-wbxadmin/build/../../webex-web-wbxadmin/STAGING/Deliverable pwd=/cctg/workingDirectory/official_WebEx_WebServices_main_webex-web-wbxadmin_3004782_201903271640/webex-web-wbxadmin/build/rpm uid=50293(ccatgbld) gid=50293(ccatgbld) groups=50293(ccatgbld)
+# Name : WBXpage.T33L Relocations: /opt/webex/package/WBXpage.T33L Version : 39.3.0 Vendor: (none) Release : 256 Build Date: Thu Mar 28 00:06:11 2019 Install Date: Thu Mar 28 04:34:32 2019 Build Host: 25d34aafb3fc Group : Applications/Communications Source RPM: WBXpage.T33L-39.3.0-256.src.rpm Size : 255476350 License: Cisco Software License 1.0 Signature : RSA/SHA1, Thu Mar 28 00:11:23 2019, Key ID 952e62c3230c0099 URL : http://www.cisco.com/ Summary : rpmgen-generated image Description : Packaging information: JAVA_HOME=/cctg/artcache/Java/openjdk_x64/1.8.0.121 date=Wed Mar 27 17:06:09 PDT 2019 hostname=25d34aafb3fc HOME=/home/ccatgbld FROM=/cctg/workingDirectory/official_Train_Web_39.3.0_page_3004779_201903271640/webex-web-applications-build/build/linux/../../../STAGING/Deliverable pwd=/cctg/workingDirectory/official_Train_Web_39.3.0_page_3004779_201903271640/webex-web-applications-build/rpm uid=50293(ccatgbld) gid=50293(ccatgbld) groups=50293(ccatgbld)'''
+# p2 = re.compile(r"Install Date: (\w \w)\s") #\d+ \d+\:\d+\:\d+ \d{4}
+# p3 = re.compile(r"Build Date[ ]{0,1}: (.*? \d+)\s")
+#
+# #print(re.findall("Name : (.*?)\s",s))
+#
+# package = re.findall("Name : (.*?)\s",s)
+# release = re.findall("Version : (.*?)\s",s)
+# version = re.findall("Release : (.*?)\s",s)
+#
+#
+#
+# p1 = list(zip(package,release,version))
+# print(list((package[p],release[p],version[p]) for p in range(len(package))))
+# #print(re.findall(p1,s))
+#
+# print("p2,p3:", re.findall(p2, s), re.findall(p3, s))
+# buildsinfo = ['{0}-{1}-{2}'.format(build[0].strip(), build[1].strip(), build[2].strip()) for build in p1]
+#
+# print(list(zip(buildsinfo, re.findall(p2, s), re.findall(p3, s))))
+#
+# from concurrent.futures import ThreadPoolExecutor
+# import requests
+# def fetch_url(url):
+#     u = requests.get(url)
+#     data = u.content
+#     return data
+# pool = ThreadPoolExecutor(10)
+# # Submit work to the pool
+# a = pool.submit(fetch_url, 'https://www.baidu.com/')
+# b = pool.submit(fetch_url, 'https://sqdemo.dmz.webex.com')
+# # Get the results back
+# x = a.result()
+# y = b.result()
+# print(x)
+# print(y)
+
+
+# from IPy import IP
+# netmask="255.255.225.192"
+# gateway="173.37.49.128"
+# ip = IP('173.37.49.128/26')
+# vlanid=50
+# print("IP\t NetMask\t GateWay\t VlanId")
+# for i in ip:
+#
+#     print(i,netmask,gateway,vlanid)
+
+class Car():
+    def __init__(self, make, model, year):
+        self.make = make
+        self.model = model
+        self.year = year
+        self.__odemeter_reading = 0
+
+    def get_car_description(self):
+        long_name = str(self.year) + ' ' + self.make + ' ' + self.model
+        return long_name.title()
+
+    def get_odemeter(self):
+        print("This car has " + str(self.__odemeter_reading) + " miles on it.")
+
+    def update_odemeter(self, mileage):
+        if mileage >= self.__odemeter_reading:
+            self.__odemeter_reading = mileage
+        else:
+            print("Rollback odemeter is not allowed!")
+
+    def increate_odemeter(self, miles):
+        self.__odemeter_reading += miles
+
+    def fill_gas_tank(self):
+        print("Filling Gas to Car")
+
+
+class TypeMismatchError(Exception):
+    pass
+
+
+class Battery():
+    def __init__(self, battery_size=70):
+        self.battery_size = battery_size
+
+    def describle_battery(self):
+        print("The Electric Car has " + str(self.battery_size) + '-kWh battery')
+
+    def set_battery(self, size):
+        if isinstance(size, int):
+            self.battery_size = size
+        else:
+            raise TypeMismatchError
+
+    def get_range(self):
+        if self.battery_size == 70:
+            range = 240
+        if self.battery_size == 85:
+            range = 250
+        msg = "This car can go approximately " + str(range) + " miles on a full charge."
+        print(msg)
+
+
+class ElectricCar(Car):
+    def __init__(self, make, model, year):
+        super().__init__(make, model, year)
+        self.battery = Battery()
+
+    #
+    # def describle_battery(self):
+    #     print("The Electric Car has " + str(self.battery.battery_size) + '-kWh battery')
+
+    def fill_gas_tank(self):
+        print("This Car doesn't need a gas tank!")
+
+
+ecar = ElectricCar('tesla', 'o4', 2018)
+ecar.get_odemeter()
+ecar.battery.describle_battery()
+ecar.fill_gas_tank()
+ecar.battery.describle_battery()
+# ecar.battery.set_battery(85)
+ecar.battery.describle_battery()
+ecar.battery.get_range()
+
+# car = Car('audi', 'a8', 2016)
+# print(car.get_car_description())
+# car.get_odemeter()
+# car._Car__odemeter_reading = 50
+# car.get_odemeter()
+# car.update_odemeter(100)
+# car.get_odemeter()
+# print(car._Car__odemeter_reading )
+# car.update_odemeter(10)
+# print(car._Car__odemeter_reading )
+# car.increate_odemeter(10)
+# car.get_odemeter()
+# print(car._Car__odemeter_reading )

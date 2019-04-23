@@ -1,2 +1,2 @@
 poolConfig:
-  EnableLog: "true"
+  Enable: "true"

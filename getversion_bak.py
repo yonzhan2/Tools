@@ -1,6 +1,5 @@
-#!/usr/local/bin/python3
+#!/usr/bin/env python
 
-from __future__ import print_function as print
 __author__ = 'YongZhang'
 __version__ = '2.0.0'
 # coding:utf-8
@@ -16,9 +15,8 @@ import requests
 import telnetlib
 import re
 import pickle as pickle
-import pymongo
 
-
+# base_dir = '/www/htdocs/'
 base_dir = os.path.dirname(os.path.abspath(__file__))
 print(base_dir)
 new_html = os.path.join(base_dir, 'versionlist.html')
@@ -31,97 +29,25 @@ base_jsonfile_tmp = os.path.join(base_dir, 'pkgdict_base_tmp.json')
 report_date = time.strftime('%m/%d/%Y %H:%M:%S GMT', time.localtime(time.time()))
 backup_date = time.strftime('%Y%m%d%H', time.localtime(time.time()))
 backup_file = os.path.join(base_dir, 'history/versionlist_{0}.html'.format(backup_date))
-failure = os.path.join(base_dir, 'failure')
 cur_hour = time.localtime().tm_hour
 _lock = os.path.join(base_dir, '.lock')
-
-MONGODB = "173.36.203.62"
 
 PkgDict = {}
 status = {}
 rpmcmd = {}
 failure_dict = {}
 max_failure = 3
-env = "QA-hf3wd"
 
 cf = configparser.ConfigParser()
 cf.read(os.path.join(base_dir, 'hckconfig.properties'))
 secs = cf.sections()
 
-#print secs
 
+# print secs
 def IsCT7():
     if os.uname()[2].startswith('3'):
         return True
 
-
-def getCurrentTime():
-    return time.strftime("%Y/%m/%d %H:%M:%S", time.localtime(time.time()))
-
-
-class ManipulateDataToMongo(object):
-    def __init__(self):
-        self.client = pymongo.MongoClient("mongodb://{0}:2701/".format(MONGODB))
-        self.mydb = self.client["build"]
-        self.mycoll = self.mydb["buildinfo"]
-
-    def querydata(self, ipaddr):
-
-        try:
-            myquery = {"ipaddr": ipaddr}
-            ret = self.mycoll.find_one(myquery)
-            if ret:
-                return True
-            return
-        except Exception as e:
-            print(("Error %d: %s" % (e.args[0], e.args[1])))
-
-    def insertdata(self, env, type, build, hostname, ipaddr):
-
-        try:
-            mydict = {"env": env, "type": type, "build": build, "hostname": hostname, "ipaddr": ipaddr,
-                      "createtime": getCurrentTime()}
-            if build and ipaddr:
-                self.mycoll.insert_one(mydict)
-            print(("inserted done for %s" % hostname))
-        except Exception as e:
-            print(("Error %d: %s" % (e.args[0], e.args[1])))
-
-    def updatedata(self, env, type, build, hostname, ipaddr):
-
-        try:
-            myquery = {"ipaddr": ipaddr}
-            newvalues = {"$set": {"env": env, "type": type, "build": build, "hostname": hostname}}
-            self.mycoll.update_one(myquery, newvalues)
-            print(("updated build info done for %s" % ipaddr))
-        except Exception as e:
-            print(("Error %d: %s" % (e.args[0], e.args[1])))
-
-    def updatestatus(self, ipaddr, status):
-
-        try:
-            myquery = {"ipaddr": ipaddr}
-            newvalues = {"$set": {"status": status, "lastmodifiedtime": getCurrentTime()}}
-            self.mycoll.update_one(myquery, newvalues)
-            print(("updated status done for %s" % ipaddr))
-        except Exception as e:
-            print(("Error %d: %s" % (e.args[0], e.args[1])))
-
-    def updatelastbuild(self, ipaddr):
-
-        try:
-            findone = self.mycoll.find_one({"ipaddr": ipaddr})
-            currentbuild = findone.get("build")
-            myquery = {"ipaddr": ipaddr}
-            newvalues = {"$set": {"lastbuild": currentbuild}}
-            self.mycoll.update_one(myquery, newvalues)
-            print(("updated lastbuild done for %s" % ipaddr))
-        except Exception as e:
-            print(("Error %d: %s" % (e.args[0], e.args[1])))
-
-
-##Initialize Class
-m = ManipulateDataToMongo()
 
 class HealthCheck:
     "get the server's health check status via the parameter input"
@@ -133,34 +59,27 @@ class HealthCheck:
 
     def getStatus(self):
         try:
-            data = requests.get(self.hckurl, timeout=5)
-            # print(f"data is {data.content.decode('utf-8')}")
+            data = requests.get(self.hckurl, timeout=10)
             m_okokok = re.compile('OKOKOK', re.I)
             m_online = re.compile('online', re.I)
-            if m_okokok.search(data.content.decode('utf-8')) or m_online.search(data.content.decode('utf-8')):
+            if m_okokok.search(data.content) or m_online.search(data.content):
                 status[self.type] = 'OKOKOK'
-                m.updatestatus(self.ip, "OKOKOK")
                 return "OKOKOK"
             else:
                 status[self.type] = 'NONONO'
-                m.updatestatus(self.ip, "NONONO")
                 return 'NONONO'
         except:
             status[self.type] = 'NONONO'
-            m.updatestatus(self.ip, "NONONO")
             return 'NONONO'
-
 
     def Telnet(self):
         try:
             tn = telnetlib.Telnet(self.ip, self.hckurl)
             tn.close()
             status[self.type] = 'OKOKOK'
-            m.updatestatus(self.ip, "OKOKOK")
             return 'OKOKOK'
         except:
             status[self.type] = 'NONONO'
-            m.updatestatus(self.ip, "NONONO")
             return 'NONONO'
 
 
@@ -172,18 +91,18 @@ def GetpkgInfo(type, server):
     hostname = ""
     ipaddr = ""
     for user, pwd in zip(['wbxbuilds'], ['P0w3rSupply!']):  # ['logs', 'wbxbuilds'], ['wbx@Aalogs', 'P0w3rSupply!'
-        #print user, pwd
+        # print user, pwd
         try:
-            ssh.connect(server, username=user, password=pwd, timeout=5)
+            ssh.connect(server, username=user, password=pwd, timeout=30)
             stdin, stdout, stderr = ssh.exec_command(rpmcmd[type])
             hostname = socket.gethostbyaddr(server)[0]
             ipaddr = socket.gethostbyname(hostname)
             print(hostname, ipaddr)
             break
-        except Exception as e:
-            print("error is ", e)
+        except:
+            pass
 
-    if type not in ('HIPPO', 'FLAMINGO', 'OTTER', 'WebAppNG', 'GlobalPageService', 'SignService'):
+    if type not in ('HIPPO', 'FLAMINGO', 'OTTER'):
         p1 = re.compile(r"Name : (.+?) Relocations:.+? Version :(.+?) Vendor: \(none\) Release : (.+?) Build Date")
         p2 = re.compile(r"Build Date: (.+?) Install Date:")  ##Build Date
         p3 = re.compile(r"Install Date: (.+?) Build Host:")  ##Install Date
@@ -191,34 +110,23 @@ def GetpkgInfo(type, server):
         p1 = re.compile(r"Name : (.+?) Version :(.+?) Release : (.+?) Architecture")
         p2 = re.compile(r"Build Date : (.+?) Build Host")  ##Build Date
         p3 = re.compile(r"Install Date: (.+?) Group")  ##Install Date
-
-    with open(os.path.join(base_dir, 'stdout'), 'wb+') as f:
+    with open('/tmp/stdout', 'w+') as f:
         f.write(stdout.read())
-    with open(os.path.join(base_dir, 'stdout')) as fh:
+        f.flush()
+    with open('/tmp/stdout') as fh:
         f = fh.read()
-    #print("content of f:", f)
-    #print re.findall(p1, f)
+    # print "content of f:", f
+    # print re.findall(p1, f)
     p1_ret = re.findall(p1, f)
 
     buildsinfo = ['{0}-{1}-{2}'.format(build[0].strip(), build[1].strip(), build[2].strip()) for build in p1_ret]
     # print re.findall(p2, f)
-    #print re.findall(p3, f)
+    # print re.findall(p3, f)
     rpmdata = list(zip(buildsinfo, re.findall(p2, f), re.findall(p3, f)))
-    rpmdata_format = list(zip(buildsinfo, [timeConvert(buildate)[0] for buildate in re.findall(p2, f)],
-                              [timeConvert(deploydate)[0] for deploydate in re.findall(p3, f)]))
     print(rpmdata)
 
-    build = [line for line in sorted(rpmdata)]
-    PkgDict[type] = {"build": build, "hostname": hostname, "ipaddr": ipaddr}
-    #print PkgDict
-
-    build = [line for line in sorted(rpmdata_format)]
-    if not m.querydata(ipaddr):
-        m.insertdata(env, type, build, hostname, ipaddr)
-    else:
-        if not os.path.exists(_lock) and cur_hour in (0, 5):
-            m.updatelastbuild(ipaddr)
-        m.updatedata(env, type, build, hostname, ipaddr)
+    PkgDict[type] = {"build": [line for line in sorted(rpmdata)], "hostname": hostname, "ipaddr": ipaddr}
+    # print PkgDict
 
 
 def getDataFromJson(type, jsonfile=json_file):
@@ -232,7 +140,7 @@ def getDataFromJson(type, jsonfile=json_file):
         ipaddr = datadict["ipaddr"]
         build = datadict["build"]
 
-        return rows, hostname, ipaddr,build
+        return rows, hostname, ipaddr, build
 
 
 def SendMsgToSparkRoom(msg=None):
@@ -242,7 +150,7 @@ def SendMsgToSparkRoom(msg=None):
                'Authorization': 'Bearer YjU2MzJhOTMtZDIzYS00MjMyLThmM2EtYzVjZjhhMjk4YjQwMTEzOWU4ZGUtNmFi'}
     headers['User-Agent'] = useragent
     roomId = '74bf8974-9b33-3892-b1f0-914bb42d465f'  # test room
-    #roomId = 'ac617a80-24cb-11e7-a0ed-cf98f532c071' ##this is T32 Firedrill Room
+    # roomId = 'ac617a80-24cb-11e7-a0ed-cf98f532c071' ##this is T32 Firedrill Room
     data = {"roomId": roomId, "text": msg, "markdown": "**%s**" % msg}
     data = json.dumps(data)
     # print data
@@ -268,12 +176,10 @@ def timeConvert(s):
 
 
 def writeHtmlHeader():
-
     if os.path.isfile(new_html):
         try:
             shutil.move(new_html, backup_file)
             # os.rename(new_html, old_html)
-            #d = os.popen('find {}/history -mtime +5 -exec rm -f {} \;'.format(base_dir))
             d = os.popen('find %s/history -mtime +5 -exec rm -f {} \;' % base_dir)
         except:
             pass
@@ -282,12 +188,13 @@ def writeHtmlHeader():
         html.write(
             r'''<!DOCTYPE html>
             <html>
+            </style>
             <head>
             <title>Package Version Check List</title>
             <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-            <meta name="format-detection" content="telephone=no">
-            <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-            <meta name="slack-app-id" content="A5P5FDK33">
+	        <meta name="format-detection" content="telephone=no">
+	        <link rel="shortcut icon" href="WebexMeetings.ico" type="image/x-icon">
+            <meta name="slack-app-id" content="A5P5FDK33">            
             </head>
             <body>
               <h1 style="font-style:italic">Package Version Check List on hf3wd</h1>
@@ -307,7 +214,7 @@ def writeHtmlHeader():
                 <th>Service Status</th>
               </tr>
               '''.format('PRIMARY' if status.get('J2EE', 'NONONO') == 'OKOKOK' else 'GSB', report_date)
-)
+        )
 
 
 def writeHtmlBody(type):
@@ -317,14 +224,14 @@ def writeHtmlBody(type):
     def isChanged(build):
         old_build = (build[0] for build in getDataFromJson(type, base_jsonfile)[3])
 
-        #print "old_build is", old_build, "new build is" ,build
+        # print "old_build is", old_build, "new build is" ,build
         if build not in old_build:
             return color[1]
         else:
             return color[0]
 
     def isRunning(type):
-        if status.get(type, '') == 'OKOKOK' or status.get(type, '')  == '' :
+        if status.get(type, '') == 'OKOKOK' or status.get(type, '') == '':
             return color[0]
         else:
             return color[2]
@@ -333,7 +240,7 @@ def writeHtmlBody(type):
 
     try:
         firstbuild = builds[0][0]
-        #print "firstbuild is ",firstbuild
+        # print "firstbuild is ",firstbuild
     except:
         firstbuild = []
 
@@ -350,9 +257,10 @@ def writeHtmlBody(type):
                 <td rowspan="{0}" align="center" {6}>{7}</td>
              </tr>
 
-            '''.format(rows, type, hostname, ipaddr, isChanged(firstbuild), firstbuild, isRunning(type), status.get(type, ''),
-           timeConvert(builds[0][1])[0], timeConvert(builds[0][2])[0])
-)
+            '''.format(rows, type, hostname, ipaddr, isChanged(firstbuild), firstbuild, isRunning(type),
+                       status.get(type, ''),
+                       timeConvert(builds[0][1])[0], timeConvert(builds[0][2])[0])
+        )
     'If the length of build >1, write to file from the second entity'
     if len(builds) > 1:
         for build in builds[1:]:
@@ -366,7 +274,7 @@ def writeHtmlBody(type):
                         <td {2} >{3}</td>
                       </tr>
                     '''.format(timeConvert(build[1])[0], timeConvert(build[2])[0], isChanged(build[0]), build[0])
-)
+                )
 
     if status.get(type, '') != 'OKOKOK':
         # print getFailure(type)
@@ -389,36 +297,35 @@ def writeHtmlBody(type):
 
 def saveSuccess(type, issend='N'):
     try:
-        pkobj = pickle.load(open(failure, 'rb'))
+        pkobj = pickle.load(open(os.path.join(base_dir, 'failure'), 'rb'))
         pkobj[type] = {'failure': 0, 'issend': issend}
         failure_dict.update(pkobj)
-        pd = pickle.dump(failure_dict, open(failure, 'wb', True))
+        pd = pickle.dump(failure_dict, open(os.path.join(base_dir, 'failure'), 'wb', True))
     except Exception as e:
         # print 'saveSuccess Failed ',e
         pkobj = {}
         pkobj[type] = {'failure': 0, 'issend': issend}
         failure_dict.update(pkobj)
-        pd = pickle.dump(failure_dict, open(failure, 'wb', True))
+        pd = pickle.dump(failure_dict, open(os.path.join(base_dir, 'failure'), 'wb', True))
 
 
 def saveFailure(type, issend='N'):
     try:
-        pkobj = pickle.load(open(failure, 'rb'))
+        pkobj = pickle.load(open(os.path.join(base_dir, 'failure'), 'rb'))
         pkobj[type] = {'failure': pkobj[type].get('failure', 0) + 1, 'issend': issend}
         failure_dict.update(pkobj)
-        pd = pickle.dump(failure_dict, open(failure, 'wb', True))
+        pd = pickle.dump(failure_dict, open(os.path.join(base_dir, 'failure'), 'wb', True))
     except Exception as e:
-        # print 'saveFailure failed ',e
         # print 'saveFailure failed ',e
         pkobj = {}
         pkobj[type] = {'failure': 1, 'issend': issend}
         failure_dict.update(pkobj)
-        pd = pickle.dump(failure_dict, open(failure, 'wb', True))
+        pd = pickle.dump(failure_dict, open(os.path.join(base_dir, 'failure'), 'wb', True))
 
 
 def getFailure(type, issend='N'):
     try:
-        pkobj = pickle.load(open(failure, 'rb'))
+        pkobj = pickle.load(open(os.path.join(base_dir, 'failure'), 'rb'))
         return pkobj[type]
     except Exception as e:
         # print 'getFailure failed',e
@@ -435,7 +342,7 @@ def writeHtmlTail():
             ''')
 
 
-def diffHtml(new,old):
+def diffHtml(new, old):
     def readfile(filename):
         with open(filename, 'rb') as f:
             text = f.read().splitlines()
@@ -450,11 +357,13 @@ def diffHtml(new,old):
     with open(diff_html, 'w+') as f:
         f.write(diff)
 
+
 def writeHtml():
-    writeHtmlHeader ()
+    writeHtmlHeader()
     for type in secs:
         writeHtmlBody(type)
-    writeHtmlTail ()
+    writeHtmlTail()
+
 
 def transferToCI():
     f = open(json_file)
@@ -469,24 +378,24 @@ def transferToCI():
     headers = {'Content-Type': 'application/json;charset=UTF-8'}
     try:
         r = requests.post(url, headers=headers, data=ret)
-        print('response staus is', r.status_code)
-        print('response content is', r.content)
+        # print 'response staus is', r.status_code
+        # print 'response content is',r.content
     except:
         print('call api failed')
 
+
 if __name__ == "__main__":
     for type in secs:
-        hck = HealthCheck (type)
+        hck = HealthCheck(type)
         # print hck.ip,hck.rpmcmd,hck.hckurl
         print(type, hck.ip, hck.getStatus())
-    #print 'url status is %s' % status
+    # print 'url status is %s' % status
 
-    for type in 'AppDBPatch', 'DPL', 'RA', 'TahoeTS', 'TahoeTS2', 'WebACD', 'TSP':
-        hck = HealthCheck (type)
+    for type in 'AppDBPatch', 'DPL', 'RA', 'TahoeTS', 'WebACD', 'TSP':
+        hck = HealthCheck(type)
         # print hck.ip,hck.rpmcmd,hck.hckurl
         print(type, hck.ip, hck.Telnet())
-    #print 'status is %s' % status
-
+    # print 'status is %s' % status
 
     for type in secs:
         server = cf.get(type, 'ip')
@@ -509,11 +418,12 @@ if __name__ == "__main__":
 
 
     def copyfile(source, destination):
-        if not os.path.isfile(_lock) :
+        if not os.path.isfile(_lock):
             try:
                 shutil.copy(source, destination)
-                #os.system('touch ' + _lock)
+                # os.system('touch ' + _lock)
             except:
+                pass
                 pass
 
 
@@ -535,11 +445,11 @@ if __name__ == "__main__":
         os.system('rm -f ' + _lock)
 
     ###writehtml
-    #writeHtml()
+    writeHtml()
 
     try:
         diffHtml(new_html, old_html)
     except:
         pass
 
-    #transferToCI()
+    transferToCI()

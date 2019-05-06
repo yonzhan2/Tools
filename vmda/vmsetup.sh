@@ -15,10 +15,12 @@ function vmsetup()
 
     hostname=$1
     ip=$2
+    netmask=$3
+    gateway=$4
 
 
     prefix=`echo ${ip} |cut -d"." -f1-3`
-    gateway=${prefix}.1
+    gateway=${gateway}
     subfix=`echo ${gateway} |cut -d"." -f3-4`
 
     ##configure /etc/hosts
@@ -40,7 +42,7 @@ function vmsetup()
     fi
 
     ##configure network
-    cp -fp /etc/sysconfig/network-scripts/ifcfg-${ethname} /tmp
+    cp -fp /etc/sysconfig/network-scripts/ifcfg-${ethname} /tmp > /dev/null 2>&1
 
     start=`echo ${ip} |cut -d'-' -f1|cut -d '.' -f4`
     if [ $(echo ${ip} |grep -o '-' |wc -l) -gt 0 ];then
@@ -66,7 +68,7 @@ function vmsetup()
         fi
         echo "BOOTPROTO=static"   >> /etc/sysconfig/network-scripts/ifcfg-${eth_name}
         echo "IPADDR=${prefix}.`expr ${start} + $i`"  >> /etc/sysconfig/network-scripts/ifcfg-${eth_name}
-        echo "NETMASK=255.255.255.128" >> /etc/sysconfig/network-scripts/ifcfg-${eth_name}
+        echo "NETMASK=${netmask}" >> /etc/sysconfig/network-scripts/ifcfg-${eth_name}
         echo "ONBOOT=yes"         >> /etc/sysconfig/network-scripts/ifcfg-${eth_name}
         echo "TYPE=Ethernet"      >> /etc/sysconfig/network-scripts/ifcfg-${eth_name}
         echo "GATEWAY=${gateway}" >> /etc/sysconfig/network-scripts/ifcfg-${eth_name}
@@ -126,4 +128,4 @@ function vmsetup()
 #    /sbin/reboot
 }
 
-vmsetup $1 $2
+vmsetup $1 $2 $3 $4

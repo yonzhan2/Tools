@@ -992,34 +992,34 @@ deldict = dict()
 import threading
 import time
 from pprint import pprint
-import requests
-
-# cmcurl = "csgcmc.qa.webex.com"
-cmcurl = "sjcmc.eng.webex.com"
-
-###QA CMC headers
-# headers = {'Authorization': 'Basic Q01DUUFfQVBJX0hGQ0lfa2V5OjdlMGRhNmU4ODk1MzRkMjQ4N2IwZjI4MzQ0OWIwM2Q4='}
-
-###SJ CMC headers
-headers = {'Authorization': 'Basic Q01DVVNBUElfa2V5OjQ4ZGJkZDcwNjkzNzRjMzhhMGMyNGIyMTcxMWQzYTA2'}
-
-current_dir = os.path.dirname(__file__)
-
-
-def getIP(component, pool):
-    url = 'https://%s/cmc/api/sitBoxList/%s/?pool=%s&ignore_owner=yes' % (cmcurl, component, pool)
-    req = requests.get(url, headers=headers)
-    res = req.json()
-    rows = res.get("rows")
-    # print(res)
-    for row in rows:
-        yield row["ip"]
-
-
+# import requests
+#
+# # cmcurl = "csgcmc.qa.webex.com"
+# cmcurl = "sjcmc.eng.webex.com"
+#
+# ###QA CMC headers
+# # headers = {'Authorization': 'Basic Q01DUUFfQVBJX0hGQ0lfa2V5OjdlMGRhNmU4ODk1MzRkMjQ4N2IwZjI4MzQ0OWIwM2Q4='}
+#
+# ###SJ CMC headers
+# headers = {'Authorization': 'Basic Q01DVVNBUElfa2V5OjQ4ZGJkZDcwNjkzNzRjMzhhMGMyNGIyMTcxMWQzYTA2'}
+#
+# current_dir = os.path.dirname(__file__)
+#
+#
+# def getIP(component, pool):
+#     url = 'https://%s/cmc/api/sitBoxList/%s/?pool=%s&ignore_owner=yes' % (cmcurl, component, pool)
+#     req = requests.get(url, headers=headers)
+#     res = req.json()
+#     rows = res.get("rows")
+#     # print(res)
+#     for row in rows:
+#         yield row["ip"]
+#
+#
 # if __name__ == "__main__":
 #     for ip in getIP("j2ee","jsq1"):
 #         print ip
-#
+
 # def fun():
 #     l = []
 #     for i in range(20):
@@ -1134,90 +1134,135 @@ def getIP(component, pool):
 # print(y)
 
 
-# from IPy import IP
-# netmask="255.255.225.192"
-# gateway="173.37.49.128"
-# ip = IP('173.37.49.128/26')
-# vlanid=50
-# print("IP\t NetMask\t GateWay\t VlanId")
-# for i in ip:
+from IPy import IP
+
+netmask = "255.255.224.0"
+gateway = "10.224.56.1"
+ip = IP('10.224.56.0/23')
+vlanid = 50
+print("IP\t NetMask\t GateWay\t VlanId")
+for i in ip:
+    print(i, netmask, gateway, vlanid)
+
+
+class ManipulateDataToMongo(object):
+    def __init__(self):
+        self.client = pymongo.MongoClient("mongodb://{0}:2701/".format(MONGODB))
+        self.mydb = self.client["build"]
+        self.mycoll = self.mydb["buildinfo"]
+
+    def querydata(self, ipaddr):
+
+        try:
+            myquery = {"ipaddr": ipaddr}
+            ret = self.mycoll.find_one(myquery)
+            if ret:
+                return True
+            return
+        except Exception as e:
+            print(("Error %d: %s" % (e.args[0], e.args[1])))
+
+    def insertdata(self, env, type, build, hostname, ipaddr):
+
+        try:
+            mydict = {"env": env, "type": type, "build": build, "hostname": hostname, "ipaddr": ipaddr,
+                      "createtime": getCurrentTime()}
+            if build and ipaddr:
+                self.mycoll.insert_one(mydict)
+            print(("inserted done for %s" % hostname))
+        except Exception as e:
+            print(("Error %d: %s" % (e.args[0], e.args[1])))
+
+    def updatedata(self, env, type, build, hostname, ipaddr):
+
+        try:
+            myquery = {"ipaddr": ipaddr}
+            newvalues = {"$set": {"env": env, "type": type, "build": build, "hostname": hostname}}
+            self.mycoll.update_one(myquery, newvalues)
+            print(("updated build info done for %s" % ipaddr))
+        except Exception as e:
+            print(("Error %d: %s" % (e.args[0], e.args[1])))
+
 #
-#     print(i,netmask,gateway,vlanid)
-
-class Car():
-    def __init__(self, make, model, year):
-        self.make = make
-        self.model = model
-        self.year = year
-        self.__odemeter_reading = 0
-
-    def get_car_description(self):
-        long_name = str(self.year) + ' ' + self.make + ' ' + self.model
-        return long_name.title()
-
-    def get_odemeter(self):
-        print("This car has " + str(self.__odemeter_reading) + " miles on it.")
-
-    def update_odemeter(self, mileage):
-        if mileage >= self.__odemeter_reading:
-            self.__odemeter_reading = mileage
-        else:
-            print("Rollback odemeter is not allowed!")
-
-    def increate_odemeter(self, miles):
-        self.__odemeter_reading += miles
-
-    def fill_gas_tank(self):
-        print("Filling Gas to Car")
-
-
-class TypeMismatchError(Exception):
-    pass
-
-
-class Battery():
-    def __init__(self, battery_size=70):
-        self.battery_size = battery_size
-
-    def describle_battery(self):
-        print("The Electric Car has " + str(self.battery_size) + '-kWh battery')
-
-    def set_battery(self, size):
-        if isinstance(size, int):
-            self.battery_size = size
-        else:
-            raise TypeMismatchError
-
-    def get_range(self):
-        if self.battery_size == 70:
-            range = 240
-        if self.battery_size == 85:
-            range = 250
-        msg = "This car can go approximately " + str(range) + " miles on a full charge."
-        print(msg)
-
-
-class ElectricCar(Car):
-    def __init__(self, make, model, year):
-        super().__init__(make, model, year)
-        self.battery = Battery()
-
-    #
-    # def describle_battery(self):
-    #     print("The Electric Car has " + str(self.battery.battery_size) + '-kWh battery')
-
-    def fill_gas_tank(self):
-        print("This Car doesn't need a gas tank!")
-
-
-ecar = ElectricCar('tesla', 'o4', 2018)
-ecar.get_odemeter()
-ecar.battery.describle_battery()
-ecar.fill_gas_tank()
-ecar.battery.describle_battery()
-# ecar.battery.set_battery(85)
-ecar.battery.describle_battery()
-ecar.battery.get_range()
+# class Car():
+#     def __init__(self, make, model, year):
+#         self.make = make
+#         self.model = model
+#         self.year = year
+#         self.__odemeter_reading = 0
+#
+#     def get_car_description(self):
+#         long_name = str(self.year) + ' ' + self.make + ' ' + self.model
+#         return long_name.title()
+#
+#     def get_odemeter(self):
+#         print("This car has " + str(self.__odemeter_reading) + " miles on it.")
+#
+#     def update_odemeter(self, mileage):
+#         if mileage >= self.__odemeter_reading:
+#             self.__odemeter_reading = mileage
+#         else:
+#             print("Rollback odemeter is not allowed!")
+#
+#     def increate_odemeter(self, miles):
+#         self.__odemeter_reading += miles
+#
+#     def fill_gas_tank(self):
+#         print("Filling Gas to Car")
+#
+#
+# class TypeMismatchError(Exception):
+#     pass
+#
+#
+# class Battery():
+#     def __init__(self, battery_size=70):
+#         self.battery_size = battery_size
+#
+#     def describle_battery(self):
+#         print("The Electric Car has " + str(self.battery_size) + '-kWh battery')
+#
+#     def set_battery(self, size):
+#         if isinstance(size, int):
+#             self.battery_size = size
+#         else:
+#             raise TypeMismatchError
+#
+#     def get_range(self):
+#         if self.battery_size == 70:
+#             range = 240
+#         if self.battery_size == 85:
+#             range = 250
+#         msg = "This car can go approximately " + str(range) + " miles on a full charge."
+#         print(msg)
+#
+#
+# class ElectricCar(Car):
+#     def __init__(self, make, model, year):
+#         super().__init__(make, model, year)
+#         self.battery = Battery()
+#
+#     #
+#     # def describle_battery(self):
+#     #     print("The Electric Car has " + str(self.battery.battery_size) + '-kWh battery')
+#
+#     def fill_gas_tank(self):
+#         print("This Car doesn't need a gas tank!")
+#
+#
+# ecar = ElectricCar('tesla', 'o4', 2018)
+# ecar.get_odemeter()
+# ecar.battery.describle_battery()
+# ecar.fill_gas_tank()
+# ecar.battery.describle_battery()
+# # ecar.battery.set_battery(85)
+# ecar.battery.describle_battery()
+# ecar.battery.get_range()
+#
+# if hasattr(ecar,'year'):
+#     print(True)
+#     setattr(ecar,'year','2020')
+#     print(getattr(ecar,'year'))
 
 # car = Car('audi', 'a8', 2016)
 # print(car.get_car_description())

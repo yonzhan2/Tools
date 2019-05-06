@@ -23,5 +23,4 @@ else
     udevadm trigger --attr-match=subsystem=net
     service network restart
   fi
-
 fi

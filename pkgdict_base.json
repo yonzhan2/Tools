@@ -1,0 +1,534 @@
+{
+  "ACDBRE": {
+    "build": [
+      [
+        "WBXacdbre-3.10.0-100",
+        "Fri Jun 30 06:45:39 2017",
+        "Fri Jun 30 23:38:41 2017"
+      ]
+    ],
+    "hostname": "wsz2bre001.qa.webex.com",
+    "ipaddr": "10.224.82.101"
+  },
+  "AS": {
+    "build": [
+      [
+        "WBXauthentication-2.8.0-200",
+        "Fri Nov 24 01:55:05 2017",
+        "Fri Nov 24 04:46:21 2017"
+      ]
+    ],
+    "hostname": "wahf1was001.qa.webex.com",
+    "ipaddr": "10.224.89.39"
+  },
+  "AppDBPatch": {
+    "build": [
+      [
+        "WBXappdb.T32-32.9.0-580",
+        "Thu 30 Nov 2017 06:49:15 AM GMT",
+        "Fri 01 Dec 2017 04:20:41 AM GMT"
+      ]
+    ],
+    "hostname": "oradbqasvr001.qa.webex.com",
+    "ipaddr": "10.224.38.115"
+  },
+  "CB": {
+    "build": [
+      [
+        "WBXerkapp-4.11.0-1851",
+        "Thu Nov 30 02:43:27 2017",
+        "Fri Dec 1 04:32:19 2017"
+      ],
+      [
+        "WBXerkapta-4.11.0-1851",
+        "Thu Nov 30 02:43:20 2017",
+        "Fri Dec 1 04:33:00 2017"
+      ],
+      [
+        "WBXerkbkmd-4.10.0-7330",
+        "Mon Oct 30 10:06:42 2017",
+        "Fri Dec 1 04:28:50 2017"
+      ],
+      [
+        "WBXerkcb-4.11.0-7638",
+        "Wed Nov 29 03:43:18 2017",
+        "Fri Dec 1 04:29:47 2017"
+      ],
+      [
+        "WBXerkcommon-4.11.0-1647",
+        "Thu Nov 30 02:33:22 2017",
+        "Fri Dec 1 04:28:20 2017"
+      ],
+      [
+        "WBXerkmzm-4.11.0-7638",
+        "Wed Nov 29 03:43:18 2017",
+        "Fri Dec 1 04:30:20 2017"
+      ]
+    ],
+    "hostname": "ehf3cbmm11.qa.webex.com",
+    "ipaddr": "10.224.89.243"
+  },
+  "CMS": {
+    "build": [
+      [
+        "WBXaudioclips-1.7.0-5",
+        "Wed Jun 21 10:47:01 2017",
+        "Mon Aug 28 01:30:54 2017"
+      ],
+      [
+        "WBXcms-1.20.0-1151",
+        "Wed Oct 18 03:30:27 2017",
+        "Thu Nov 30 23:37:49 2017"
+      ]
+    ],
+    "hostname": "tsz1cms001.qa.webex.com",
+    "ipaddr": "10.224.82.40"
+  },
+  "ClusterMRS": {
+    "build": [
+      [
+        "WBXmbs-1.13.0-1009",
+        "Wed Nov 29 02:45:18 2017",
+        "Fri Dec 1 04:33:30 2017"
+      ],
+      [
+        "WBXmbs2-2.2.0-1009",
+        "Tue Nov 28 12:07:03 2017",
+        "Fri Dec 1 04:47:17 2017"
+      ],
+      [
+        "WBXmrs-1.13.0-1064",
+        "Wed Nov 29 02:38:30 2017",
+        "Fri Dec 1 04:40:23 2017"
+      ],
+      [
+        "WBXwebappng-1.2.0-1213",
+        "Fri Nov 24 05:36:11 2017",
+        "Sat Nov 25 00:00:39 2017"
+      ]
+    ],
+    "hostname": "jhf3mcr001.qa.webex.com",
+    "ipaddr": "10.224.89.186"
+  },
+  "DPL": {
+    "build": [
+      [
+        "WBXadminstatic-4.9.0-376",
+        "Wed Nov 29 10:47:34 2017",
+        "Thu Nov 30 01:55:00 2017"
+      ],
+      [
+        "WBXclient.T30L-30.20.3-10012",
+        "Wed Jul 12 06:54:11 2017",
+        "Thu Oct 26 23:53:51 2017"
+      ],
+      [
+        "WBXclient.T31L-31.20.0-24",
+        "Tue Feb 9 20:45:20 2010",
+        "Mon Nov 27 23:41:19 2017"
+      ],
+      [
+        "WBXclient.T32L-32.9.0-265",
+        "Thu Nov 30 06:11:20 2017",
+        "Thu Nov 30 07:09:14 2017"
+      ],
+      [
+        "WBXmsi.T30L-30.20.3-10012",
+        "Wed Jul 12 06:54:45 2017",
+        "Fri Oct 27 00:04:16 2017"
+      ],
+      [
+        "WBXmsi.T31L-31.20.0-24",
+        "Thu Nov 2 15:21:00 2017",
+        "Thu Nov 2 23:56:34 2017"
+      ],
+      [
+        "WBXmsi.T32L-32.9.0-265",
+        "Thu Nov 30 06:12:33 2017",
+        "Thu Nov 30 07:40:51 2017"
+      ],
+      [
+        "WBXpagecommonstatic-32.9.0-337",
+        "Tue Nov 28 14:36:02 2017",
+        "Tue Nov 28 23:38:49 2017"
+      ],
+      [
+        "WBXpagestatic.T30L-30.24.0-10009",
+        "Thu Aug 31 08:36:46 2017",
+        "Tue Oct 24 05:49:26 2017"
+      ],
+      [
+        "WBXpagestatic.T31L-31.21.0-77",
+        "Tue Nov 28 08:18:54 2017",
+        "Tue Nov 28 23:40:28 2017"
+      ],
+      [
+        "WBXpagestatic.T32L-32.9.0-596",
+        "Thu Nov 30 03:00:24 2017",
+        "Thu Nov 30 04:28:39 2017"
+      ],
+      [
+        "WBXptool.2.7.0-30.17.6-10006",
+        "Thu Mar 9 10:44:25 2017",
+        "Mon Mar 13 07:52:47 2017"
+      ],
+      [
+        "WBXptool.2.8.0-32.9.0-29",
+        "Thu Nov 30 05:01:15 2017",
+        "Thu Nov 30 05:20:19 2017"
+      ]
+    ],
+    "hostname": "jhf3dpl001.qa.webex.com",
+    "ipaddr": "10.224.89.211"
+  },
+  "DSA": {
+    "build": [
+      [
+        "WBXdsa-1.11.0.GIVR-166",
+        "Tue Nov 28 03:01:30 2017",
+        "Tue Nov 28 04:19:15 2017"
+      ]
+    ],
+    "hostname": "tsz1dsa001.qa.webex.com",
+    "ipaddr": "10.224.82.91"
+  },
+  "GLA": {
+    "build": [
+      [
+        "WBXgloballookupapi-3.2.0-407",
+        "Thu Nov 30 18:39:11 2017",
+        "Thu Nov 30 23:38:47 2017"
+      ]
+    ],
+    "hostname": "vsz1gla001.qa.webex.com",
+    "ipaddr": "10.224.82.70"
+  },
+  "GlobalMRS": {
+    "build": [
+      [
+        "WBXmrs-1.13.0-1064",
+        "Wed Nov 29 02:38:30 2017",
+        "Fri Dec 1 04:27:42 2017"
+      ]
+    ],
+    "hostname": "vsz1mrs001.qa.webex.com",
+    "ipaddr": "10.224.82.122"
+  },
+  "IVR": {
+    "build": [
+      [
+        "WBXivr_gcov-1.11.0.GIVR-121",
+        "Tue Nov 21 01:57:05 2017",
+        "Tue Nov 21 02:16:19 2017"
+      ]
+    ],
+    "hostname": "tsz1ivr001.qa.webex.com",
+    "ipaddr": "10.224.82.93"
+  },
+  "J2EE": {
+    "build": [
+      [
+        "WBXadmin-4.9.0-376",
+        "Wed Nov 29 10:47:53 2017",
+        "Thu Nov 30 01:59:21 2017"
+      ],
+      [
+        "WBXpage.T30L-30.24.0-10009",
+        "Thu Aug 31 08:37:28 2017",
+        "Wed Oct 25 01:26:22 2017"
+      ],
+      [
+        "WBXpage.T31L-31.21.0-77",
+        "Tue Nov 28 08:19:25 2017",
+        "Tue Nov 28 23:55:33 2017"
+      ],
+      [
+        "WBXpage.T32L-32.9.0-596",
+        "Thu Nov 30 03:00:58 2017",
+        "Thu Nov 30 04:37:56 2017"
+      ],
+      [
+        "WBXpageassets-2.2.0-1",
+        "Thu Mar 24 08:43:08 2016",
+        "Wed Aug 23 03:06:08 2017"
+      ],
+      [
+        "WBXpagecommon-32.9.0-337",
+        "Tue Nov 28 14:36:04 2017",
+        "Tue Nov 28 23:44:42 2017"
+      ]
+    ],
+    "hostname": "jhf3tc001.qa.webex.com",
+    "ipaddr": "10.224.89.100"
+  },
+  "MJS": {
+    "build": [
+      [
+        "WBXmjs-1.15.0-2933",
+        "Wed Nov 29 11:19:17 2017",
+        "Thu Nov 30 01:59:51 2017"
+      ],
+      [
+        "WBXmjsasset-1.15.0-2933",
+        "Wed Nov 29 11:19:35 2017",
+        "Fri Dec 1 04:27:33 2017"
+      ]
+    ],
+    "hostname": "jhf3mjs001.qa.webex.com",
+    "ipaddr": "10.224.89.77"
+  },
+  "MMPMCC": {
+    "build": [
+      [
+        "WBXmcc-3.19.0-2398",
+        "Wed Nov 29 04:23:40 2017",
+        "Fri Dec 1 06:17:17 2017"
+      ]
+    ],
+    "hostname": "msz1mcc11.qa.webex.com",
+    "ipaddr": "10.224.82.96"
+  },
+  "MMPMCS": {
+    "build": [
+      [
+        "WBXmcs-3.19.0-2398",
+        "Wed Nov 29 04:23:47 2017",
+        "Fri Dec 1 06:17:47 2017"
+      ]
+    ],
+    "hostname": "msz1mcs101.qa.webex.com",
+    "ipaddr": "10.224.82.98"
+  },
+  "NBRDPS": {
+    "build": [
+      [
+        "WBXnbr.dispatcher-3.14.0-111",
+        "Mon Nov 6 10:06:46 2017",
+        "Wed Nov 8 02:13:40 2017"
+      ]
+    ],
+    "hostname": "nsz2dps001.qa.webex.com",
+    "ipaddr": "10.224.82.73"
+  },
+  "NBRMSC": {
+    "build": [
+      [
+        "WBXmsc-1.8.0-81",
+        "Thu Oct 19 09:41:42 2017",
+        "Tue Oct 31 06:17:51 2017"
+      ]
+    ],
+    "hostname": "nsz2msc001.qa.webex.com",
+    "ipaddr": "10.224.82.85"
+  },
+  "NBRMSS": {
+    "build": [
+      [
+        "WBXmss-1.8.0-81",
+        "Thu Oct 19 09:41:46 2017",
+        "Tue Oct 31 06:18:05 2017"
+      ]
+    ],
+    "hostname": "nsz2mss001.qa.webex.com",
+    "ipaddr": "10.224.82.87"
+  },
+  "NBRVSS": {
+    "build": [
+      [
+        "WBXnbr.streamserver-3.14.0-117",
+        "Tue Nov 28 10:30:56 2017",
+        "Wed Nov 29 02:17:06 2017"
+      ]
+    ],
+    "hostname": "nsz2vss001.qa.webex.com",
+    "ipaddr": "10.224.82.74"
+  },
+  "NBRWES": {
+    "build": [
+      [
+        "WBXnbr.workengine.core-3.14.0-171",
+        "Mon Nov 6 09:09:33 2017",
+        "Wed Nov 8 02:25:55 2017"
+      ],
+      [
+        "WBXnbr.workengine.tools-3.14.0-201",
+        "Mon Nov 6 09:12:06 2017",
+        "Wed Nov 29 05:17:21 2017"
+      ]
+    ],
+    "hostname": "nsz2wes001.qa.webex.com",
+    "ipaddr": "10.224.82.72"
+  },
+  "NBRWSS": {
+    "build": [
+      [
+        "WBXnbrwss-3.14.0-1427",
+        "Fri Nov 17 04:26:19 2017",
+        "Fri Nov 17 23:44:31 2017"
+      ],
+      [
+        "WBXpagecommon-32.8.0-269",
+        "Fri Nov 3 03:52:32 2017",
+        "Wed Nov 8 10:41:27 2017"
+      ]
+    ],
+    "hostname": "nsz2wss003.qa.webex.com",
+    "ipaddr": "10.224.82.242"
+  },
+  "RA": {
+    "build": [
+      [
+        "WBXerkcommon-4.11.0-1647",
+        "Thu Nov 30 02:33:22 2017",
+        "Fri Dec 1 04:27:36 2017"
+      ],
+      [
+        "WBXerkra-4.10.0-7330",
+        "Mon Oct 30 10:06:42 2017",
+        "Fri Dec 1 04:28:08 2017"
+      ]
+    ],
+    "hostname": "ehf3ra101.qa.webex.com",
+    "ipaddr": "10.224.89.240"
+  },
+  "Reminder": {
+    "build": [
+      [
+        "WBXlogadmin-32.8.0-23",
+        "Fri Oct 27 04:04:30 2017",
+        "Fri Oct 27 04:29:31 2017"
+      ],
+      [
+        "WBXreminder-3.16.0-943",
+        "Thu Nov 30 08:36:15 2017",
+        "Fri Dec 1 00:55:18 2017"
+      ]
+    ],
+    "hostname": "rhf1rmd003.qa.webex.com",
+    "ipaddr": "10.224.89.101"
+  },
+  "Superadmin": {
+    "build": [
+      [
+        "WBXsuper-32.9.0-1197",
+        "Wed Nov 29 06:25:55 2017",
+        "Thu Nov 30 02:22:21 2017"
+      ],
+      [
+        "WBXsuperui-32.9.0-1197",
+        "Wed Nov 29 06:26:10 2017",
+        "Thu Nov 30 02:11:51 2017"
+      ]
+    ],
+    "hostname": "cfgsz1app1.qa.webex.com",
+    "ipaddr": "10.224.82.69"
+  },
+  "TPGW": {
+    "build": [
+      [
+        "WBXtpgw-gcov-4.15.0-2506",
+        "Wed Nov 29 10:11:09 2017",
+        "Thu Nov 30 01:23:47 2017"
+      ]
+    ],
+    "hostname": "vhf1tpg001.qa.webex.com",
+    "ipaddr": "10.224.89.241"
+  },
+  "TSP": {
+    "build": [
+      [
+        "WBXpai-3.15.0-3075",
+        "Tue Oct 17 07:15:00 2017",
+        "Wed Oct 18 06:45:43 2017"
+      ]
+    ],
+    "hostname": "pt1tsp001.qa.webex.com",
+    "ipaddr": "10.224.54.164"
+  },
+  "TahoeMACC": {
+    "build": [
+      [
+        "WBXmacc-3.20.0-739",
+        "Tue Nov 28 12:18:41 2017",
+        "Wed Nov 29 05:28:37 2017"
+      ]
+    ],
+    "hostname": "tsz1cc001.qa.webex.com",
+    "ipaddr": "10.224.82.83"
+  },
+  "TahoeTAS": {
+    "build": [
+      [
+        "WBXtahoeas-3.20.0-739",
+        "Tue Nov 28 12:18:29 2017",
+        "Wed Nov 29 05:28:53 2017"
+      ]
+    ],
+    "hostname": "tsz1as001.qa.webex.com",
+    "ipaddr": "10.224.82.79"
+  },
+  "TahoeTS": {
+    "build": [
+      [
+        "WBXjtel_tahoe-3.20.0-344",
+        "Wed Nov 22 09:43:24 2017",
+        "Wed Nov 22 23:37:45 2017"
+      ]
+    ],
+    "hostname": "tsz1ts001.qa.webex.com",
+    "ipaddr": "10.224.82.77"
+  },
+  "WWP": {
+    "build": [
+      [
+        "WBXerkbkmd-4.10.0-7330",
+        "Mon Oct 30 10:06:42 2017",
+        "Fri Dec 1 04:28:09 2017"
+      ],
+      [
+        "WBXerkcommon-4.11.0-1647",
+        "Thu Nov 30 02:33:22 2017",
+        "Fri Dec 1 04:27:44 2017"
+      ],
+      [
+        "WBXerkwwp-4.11.0-7638",
+        "Wed Nov 29 03:43:39 2017",
+        "Fri Dec 1 04:28:42 2017"
+      ]
+    ],
+    "hostname": "ehf3wwp1.qa.webex.com",
+    "ipaddr": "10.224.89.224"
+  },
+  "WebACD": {
+    "build": [
+      [
+        "WBXacdacd-3.10.0-100",
+        "Fri Jun 30 06:45:46 2017",
+        "Fri Jun 30 23:38:02 2017"
+      ]
+    ],
+    "hostname": "wsz2acd001.qa.webex.com",
+    "ipaddr": "10.224.82.100"
+  },
+  "XMLAPI": {
+    "build": [
+      [
+        "WBXsxa-3.1.0-104",
+        "Tue Oct 31 23:35:09 2017",
+        "Wed Nov 1 04:34:13 2017"
+      ],
+      [
+        "WBXxmlapi.11.0.0-9.0-563",
+        "Wed Nov 29 22:07:06 2017",
+        "Thu Nov 30 02:28:59 2017"
+      ],
+      [
+        "WBXxmlproxy-4.8.0-355",
+        "Tue Oct 31 23:38:21 2017",
+        "Wed Nov 1 04:35:33 2017"
+      ]
+    ],
+    "hostname": "xhf1tc001.qa.webex.com",
+    "ipaddr": "10.224.89.225"
+  }
+}

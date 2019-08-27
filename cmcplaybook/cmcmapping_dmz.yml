@@ -10,176 +10,198 @@ component:
   #        - SQ1DMZ: CONFIGDB_PRI.SQ1DMZ.oradbsqsvr001
   #        - SASB: CONFIGDB_PRI.SASB.oradbsasrv001
 
-  #    j2ee:
-  #      pools:
-  #        #- jsq1
-  #        - jsa1
-  #      version:
-  #        39.4.0-0000
+  #      j2ee:
+  #        pools:
+  #          #- jsq1
+  #          - jsa1
+  #          - gjsg1
+  #        version:
+  #          39.8.0-0000
   #
-  #    meetingjoinservice:
-  #      pools:
-  #        - jsq1
-  #        - jsa1
-  #      version:
-  #        2.12.0-0100
+  #      meetingjoinservice:
+  #        pools:
+  #          - jsq1
+  #          - jsa1
+  #          - gjsg1
+  #        version:
+  #          2.16.0-0100
   #
-  #    meetingregistryservice:
-  #      pools:
-  #        - vsq1
-  #        - vsa1
-  #      version:
-  #        1.30.0-0100
+  #      meetingregistryservice:
+  #        pools:
+  #          - vsq1
+  #          - vsa1
+  #        version:
+  #          1.34.0-0100
   #
-  #    clustermrs:
-  #      pools:
-  #        - jsq1
-  #        - jsa1
-  #      version:
-  #        1.23.0-0100
+  #      clustermrs:
+  #        pools:
+  #          - jsq1
+  #          - jsa1
+  #          - gjsg1
+  #        version:
+  #          1.27.0-0100
   #
-  #    webng:
-  #      pools:
-  #        - jsq1
-  #        - jsa1
-  #      version:
-  #        1.18.0-0100
+  #      webng:
+  #        pools:
+  #          - jsq1
+  #          - jsa1
+  #          - gjsg1
+  #        version:
+  #          1.22.0-0100
   #
-  #    reminder:
-  #      pools:
-  #        #- rsq1
-  #        - jsa1
-  #      version:
-  #        3.32.0-0000
+  #      reminder:
+  #        pools:
+  #          - rsq1
+  #          - jsa1
+  #        version:
+  #          39.8.0-0000
   #
-  #    authentication:
-  #      pools:
-  #        - wasq1
-  #        - wasa1
-  #      version:
-  #        2.24.0-0100
+  #      authentication:
+  #        pools:
+  #          - wasq1
+  #          - wasa1
+  #        version:
+  #          2.28.0-0100
   #
-  #    superadmin:
-  #      pools:
-  #        - cfgsq1
-  #        - cfgsa1
-  #      version:
-  #        39.4.0-0000
+  #      superadmin:
+  #        pools:
+  #          - cfgsq1
+  #          - cfgsa1
+  #        version:
+  #          39.8.0-0000
   #
-  #    eureka:
-  #      pools:
-  #        - sq1
-  #        - ed1sm
-  #        - ed12sa
-  #        - esa
-  #        - esg
-  #        - ed1sb
-  #      version:
-  #        6.4.0-0000
+  #      eureka:
+  #        pools:
+  #          - sq1
+  #          - ed1sm
+  #          - ed12sa
+  #          - ed11hz
+  #          - ed12hz
+  #          - esa
+  #          - esg
+  #          - ed1sb
+  #        version:
+  #          6.8.0-0000
+
+  #      mmp:
+  #        pools:
+  #          - sq1
+  #          - gmsg11
+  #          - msa1
+  #          - gmsg1
+  #          - m31sb
+  ##          - msq1_m11hz
+  ##          - msa1_m12hz
+  #        version:
+  #          6.5.0-0000
 
   mmp:
     pools:
-      - sq1
-      - gmsg11
-      #- m11sm
-      - msa1
-      - m31sb
+      - sq2
+      - gmsg12
+      - m12sa
+      - m12sm
+      - m11sm
     version:
-      6.1.0-0000
+      6.5.0-7000
 
-
-#    nbr:
-#      pools:
-#        - sq1
-#        - nsa1
-#      version:
-#        4.7.0-0000
-
-#    tahoe:
-#      pools:
-#        - tsq1
-#        - tsq2
-#        - tsa1
-#      version:
-#        5.4.0-0000
 #
-#    tpgw:
-#      pools:
-#        - vsq1
-#        - vsg1
-#        - vsa1
-#      version:
-#        6.4.0-0000
+#      nbr:
+#        pools:
+#          - sq1
+#          - nsa1
+#          - nsg1
+#        version:
+#          4.11.0-0000
+#
+#      tahoe:
+#        pools:
+#          - tsq1
+#          - tsq2
+#          - tsa1
+#          - tsg1
+#        version:
+#          5.8.0-0000
+#
+#      tpgw:
+#        pools:
+#          - vsq1
+#          - vsg1
+#          - vsa1
+#        version:
+#          6.8.0-0000
+#
+#      cms:
+#        pools:
+#          - tsq1
+#          - tsq2
+#          - tsq3
+#          - tsq4
+#          - tsq5
+#          - tsq6
+#          - tsq1givr
+#          - tsq2givr
+#          - tsa1
+#          - tsg1
+#          - tsm1
+#          - tsm2
+#        version:
+#          3.8.0-0000
 
-#    cms:
-#      pools:
-#        - tsq1
-#        - tsq2
-#        - tsq3
-#        - tsq4
-#        - tsq5
-#        - tsq6
-#        - tsq1givr
-#        - tsq2givr
-#        - tsa1
-#        - tsm1
-#        - tsm2
-#      version:
-#        3.3.0-0000
+#      audioclips:
+#        pools:
+#          - tsq1
+#          - tsq2
+#          - tsq3
+#          - tsq4
+#          - tsq5
+#          - tsq6
+#          - tsq1givr
+#          - tsq2givr
+#          - tsa1
+#          - tsg1
+#          - tsm1
+#          - tsm2
+#        version:
+#          2.9.0-0000
 
-#    audioclips:
-#      pools:
-#        - tsq1
-#        - tsq2
-#        - tsq3
-#        - tsq4
-#        - tsq5
-#        - tsq6
-#        - tsq1givr
-#        - tsq2givr
-#        - tsa1
-#        - tsm1
-#        - tsm2
-#      version:
-#        2.8.0-0000
+#      givr:
+#        pools:
+#          - tsq1
+#          - tsq2
+#          - tsg1
+#          - tsa1
+#        version:
+#          3.8.0-0000
 #
-#    givr:
-#      pools:
-#        - tsq1
-#        - tsq2
-#        - tsg1
-#        - tsa1
-#      version:
-#        3.4.0-0000
+#      xmlapi:
+#        pools:
+#          #- sq1
+#          - xsa1
+#        version:
+#          39.8.0-0000
 #
-#    xmlapi:
-#      pools:
-#        #- sq1
-#        - xsa1
-#      version:
-#        39.4.0-0000
+#      gla:
+#        pools:
+#          - sq1
+#          - vsa1
+#        version:
+#          4.7.0-0000
 #
-#    gla:
-#      pools:
-#        - sq1
-#        - vsa1
-#      version:
-#        4.3.0-0000
-
-#    csp:
-#      pools:
-#        - cspsq1
-#        - gcspsg1
-#        - cspdf1
-#        - cspia1
-#      version:
-#        1.4.0-0000
+#      csp:
+#        pools:
+#          - cspsq1
+#          - gcspsg1
+#          - cspdf1
+#          - cspia1
+#        version:
+#          2.3.0-0000
 #
-#    globalpageservice:
-#      pools:
-#        - gpsq1
-#      version:
-#        39.3.0-0100
+#      globalpageservice:
+#        pools:
+#          - gpsq1
+#        version:
+#          39.8.0-0100
 
 #  signservice:
 #    pools:

@@ -1,8 +1,8 @@
-component: appdjavaagent
+component: esaas
 
 variables:
-  pool: ccssq1
-  version: 5.6.9-181122
+  pool: clhf3
+  version: 6.5.4-1901
 
 tasks:
 
@@ -13,21 +13,77 @@ tasks:
     changeStatus: approved
     override:
       mainService:
-        Pool: "{{configs/poolConfig.yml:poolConfig}}"
-        EnableLog: true
+        #Pool: "{{configs/poolConfig.yml:poolConfig}}"
+        # Pool:
+        #   Enable: "true"
+        Box: #"{{configs/boxConfig.yml:boxConfig}}"
 
-  - name: "deploy pool for {{pool}}"
-    action: Deploy
-    pool: "{{pool}}"                    # if ignore this row, will use default
-    versionBuild: "{{version}}"         # if ignore this row, will use default
-    #taskType: service_refresh
-    additional:
-      configuration: true
-      service: true
-      package: true
-      #boxTypeList:
-      #  - provisioner
-      #boxList:
-      # - name: cfgszpri101
+
+          clhf3esm001:
+            elasticsearch.xpack_key: '-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEA4WFqIzH1884k36gCMflEIHRyxRx4XyF1cYbc8KIleRSV0+wT
+Wq8nDdpOdwXFPmyyQfBk49rsAmN4u5d0yoIFuVbiDAuCKeBJ6Nl1HksmVxuTbGV4
+bjW7CYqzuSrurlvBE4887zRJLvZ+ds8cRJc1FHWOB+kYmUqNliR07o9Mp0LwyEjk
+FpjAP8hrm4wQ2M2+8IKXIwi8cRKHOT3cnIwyXu9IaOe/zej3S5Y9rCkSPnjX3q+w
+DFAyx0swhQFVsS4NenzpxyNfbzh0m908e70Ia5uhkThjgh7pZPai0kgUc5obl9vV
+3OAv4BTZE7g8LLDJyz8xWdF0rvEzISdzM9/djwIDAQABAoIBADhFpUVyVPFxl91L
+yniFvw/HY1x5lkhSR0t4G7PtGCQaEqqd99sdfkfEKPEovK2wX/V8uwP1BhY2lc9o
+ql1hh2JWIgxV10LzYCDGIqrUopb/KJjY4O/LdI6WVfc2k+9us09Z5SHoURlrq/mo
+DmvFwRgBndu1xFGJvr4tDhD+MGpWIVUsuEN6O4iBjnvVRxutJg25run7y6iRQ7zz
+1rVYC2jDWUFaus8AlhmJ0fhVePMGawwFSkY9W1n5sMpjzqTwH+ivz7IwYf877diQ
+UiSmt5LykD/joCa62rsrg0qPg0G169p5F7csWcq9Bl6/kVizFaag+4nxnCtsNese
+AdxfU0ECgYEA+ZETtIuiyk4eA/xfyNrGeshcmlay8BKznRByTHmAikjWlGr/Awxh
+zRBDk0lNzrnXjjd9U/WsT0WIhRcvM8i+F8MHWSPgT5bykZykf3kYLfEO9E44oGU5
+3duZzuevxyerQP++iJw1rXAcq3PwyowFLBVW6DRIQmNzbxz+28Fova8CgYEA5zC6
+2aX82CjwLo7j5HmOxbMopx2NnB0VzPJXY1+gheunvtqpO0Qcbs1S5G1I6l1i8OhS
+YWpEzfFbHmM4Q0hoX9cJC3+TCVer/C2DQqKZ5fuqfkHD20toSMFaOTeKVXG2idwL
+zsIYtrzGHMMnTLN8ELTJYlYYiN/E5f3+3dgLtiECgYEAloYSRIsUHMERCYZmn1aU
+7+l5MP2p33LoMouA5O9DwCQ+iDYgqU4GjxCIMYW9EDq28Gg3hzReQVHHDb72EV26
+icpv3CvvVxHMLFc2QExhcRQ72M51CQkE5fNVyZ2kP5KFkCawXOUa2wkLwb2kNgZN
++FDGojcmfiRNs27hqNn2urECgYAReAUmXPx1+OHtIq7lnKnFFnyD5B/HJAt5qPYh
+dCBU/jF2ol8XM1ZSqQEScY+I5fWL7oILClSYmxwfd6/Qpa/9TepJDCK4Gf/M1kOM
+zWyDjDidwapi75e5p6KBoEi7nBQG5rGdtdzYMftmQPi/OvCs8nwlCgxgi0f9eOvB
+J4n7AQKBgQDsSzdxp/2TpQB+yzBm+lgLutvwkmZHf5qD80VCAuubBcNF/5wwazr/
+e6UQRQF9SO3O6olMBQexS3bfWJtqkvsog/exU8PHvbdD8M5szWeOrNQwW6HaO+vr
+V+vQKRgX6587e0aE163+ToE0DVy4slI8kw4ZI+d1x8SNAFUb7GTQ/Q==
+-----END RSA PRIVATE KEY-----'
+
+            elasticsearch.xpack_crt: '-----BEGIN CERTIFICATE-----
+MIIDUTCCAjmgAwIBAgIVAOVYpjK7+HyWNlwXper+2SkDf/PTMA0GCSqGSIb3DQEB
+CwUAMDQxMjAwBgNVBAMTKUVsYXN0aWMgQ2VydGlmaWNhdGUgVG9vbCBBdXRvZ2Vu
+ZXJhdGVkIENBMB4XDTE5MDUwOTAzNDI1NloXDTIyMDUwODAzNDI1NlowFjEUMBIG
+A1UEAxMLY2xoZjNlc2MwMDEwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIB
+AQDhYWojMfXzziTfqAIx+UQgdHLFHHhfIXVxhtzwoiV5FJXT7BNarycN2k53BcU+
+bLJB8GTj2uwCY3i7l3TKggW5VuIMC4Ip4Eno2XUeSyZXG5NsZXhuNbsJirO5Ku6u
+W8ETjzzvNEku9n52zxxElzUUdY4H6RiZSo2WJHTuj0ynQvDISOQWmMA/yGubjBDY
+zb7wgpcjCLxxEoc5PdycjDJe70ho57/N6PdLlj2sKRI+eNfer7AMUDLHSzCFAVWx
+Lg16fOnHI19vOHSb3Tx7vQhrm6GROGOCHulk9qLSSBRzmhuX29Xc4C/gFNkTuDws
+sMnLPzFZ0XSu8TMhJ3Mz392PAgMBAAGjeDB2MB0GA1UdDgQWBBSIYUw6i36EbP6L
+lae1jg2VeZYHOjAfBgNVHSMEGDAWgBRGE4oR0V3RfbUXL64NjwEQuHqKZjApBgNV
+HREEIjAgghhjbGhmM2VzYzAwMS5xYS53ZWJleC5jb22HBArgWQ0wCQYDVR0TBAIw
+ADANBgkqhkiG9w0BAQsFAAOCAQEAU3ERBm+6EL0an02f6kVNcVaJd7xd3EelNLbB
+9FYWWSCIcjrGsr1l9HQAC/z6EiZ5BZ5bApJKf+lOA5ozKTckfDYdzJgE+bF3rfWv
+2P++ygXPFoz/jZvUEjZ9KUqvz0VcmJWykH6kK91yQw8FNl4z89rBH8koxlRS1gQf
+gJtBwXw7Lh1ltzPpKBK+IvGjlxLDaeit6MggQgNqfeYxA0N5V7fp/LV6LDVLGe2l
+tMB/MhalWxwVg8bCvTK4UaPdwt46lsVbEgekHVCaqiHz6D4qBnfHNMo0mrUJ28XD
+cNl8+kaxJINSwbCmNnlfd1FByS6kd4cdEmer/k6v+OIK3hSaRQ==
+-----END CERTIFICATE-----'
+
+
+    # - name: "deploy pool for {{pool}}"
+    #   action: Deploy
+    #   pool: "{{pool}}"                    # if ignore this row, will use default
+    #   versionBuild: "{{version}}"         # if ignore this row, will use default
+    #   #taskType: service_refresh
+    #   additional:
+    #       configuration: true
+    #       service: false
+    #       package: false
+    #   #boxTypeList:
+    #   #  - provisioner
+    #   #boxList:
+    #    # - name: cfgszpri101
+    user:
+      yonzhan2
 
     

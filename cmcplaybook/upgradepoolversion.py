@@ -1,7 +1,7 @@
 import requests
 import os
 import time
-from multiprocessing import Pool, cpu_count
+from multiprocessing import Pool, Manager, cpu_count
 from yaml import load
 import re
 
@@ -12,7 +12,7 @@ cmcurl = "sjcmc.dmz.webex.com"
 #headers = {'Authorization': 'Basic Q01DUUFfQVBJX0hGQ0lfa2V5OjdlMGRhNmU4ODk1MzRkMjQ4N2IwZjI4MzQ0OWIwM2Q4='}
 
 ###SJ CMC headers
-headers = {'Authorization': 'Basic Q01DQVBJX0RNWl9rZXk6MGE1ZGJhYTFmY2E5NGVhZThiYTE4YzIzZDYyZmI3Yzg='}
+headers = {'Authorization': 'Basic Q01DQVBJX0RNWjo5M2IyOGNiNzQ4NjM0YmJmYTI4YWZkNWVhODQ2NGY3Mg=='}
 
 if re.search("csgcmc", cmcurl):
     env = "qa"
@@ -21,7 +21,6 @@ else:
 
 current_dir = os.path.dirname(__file__)
 start = time.time()
-
 
 class GetData():
     def __init__(self, cmcmapping_file):
@@ -49,7 +48,7 @@ def generateconfig(component, poolname, service_version, build_no="0100"):
     req = requests.post(url, data=data, headers=headers)
     ret = req.json()
     # print(ret,component,poolname)
-    time.sleep(5)
+    time.sleep(2)
     if ret["result"] == "0000":
         return "Success on %s-%s " % (component, poolname)
     else:
@@ -107,7 +106,7 @@ tasks:
     filename = os.path.join(current_dir, '%s_%s.yml' % (component, poolname))
     with open(filename, 'w+') as f:
         f.write(playbook)
-    time.sleep(5)
+    time.sleep(2)
     files = {'playbook': open(filename, 'rb')}
     req = requests.post(url, files=files, headers=headers)
     os.remove(filename)
@@ -125,7 +124,7 @@ if __name__ == "__main__":
         print(component_name, service_version, build_no)
 
         for pname in getdata.getpool(component_name):
-            pool = Pool(cpu_count())
+            pool = Pool(cpu_count() - 1)
 
             print("Generate config for %s-%s " % (component_name, pname))
             generateconfig(component_name, pname, service_version, build_no)

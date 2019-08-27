@@ -18,6 +18,7 @@ import re
 import pickle as pickle
 import pymongo
 
+requests.packages.urllib3.disable_warnings()
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 print(base_dir)

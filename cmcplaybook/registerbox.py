@@ -1,14 +1,14 @@
 import requests
 import os
 
-# cmcurl = "csgcmc.qa.webex.com"
-cmcurl = "sjcmc.eng.webex.com"
+cmcurl = "csgcmc.qa.webex.com"
+# cmcurl = "sjcmc.eng.webex.com"
 
 ###QA CMC headers
-# headers = {'Authorization': 'Basic Q01DUUFfQVBJX0hGQ0lfa2V5OjdlMGRhNmU4ODk1MzRkMjQ4N2IwZjI4MzQ0OWIwM2Q4='}
+headers = {'Authorization': 'Basic Q01DUUFfQVBJX0hGQ0lfa2V5OjdlMGRhNmU4ODk1MzRkMjQ4N2IwZjI4MzQ0OWIwM2Q4='}
 
 ###SJ CMC headers
-headers = {'Authorization': 'Basic Q01DVVNBUElfa2V5OjQ4ZGJkZDcwNjkzNzRjMzhhMGMyNGIyMTcxMWQzYTA2'}
+#headers = {'Authorization': 'Basic Q01DVVNBUElfa2V5OjQ4ZGJkZDcwNjkzNzRjMzhhMGMyNGIyMTcxMWQzYTA2'}
 
 current_dir = os.path.dirname(__file__)
 
@@ -27,12 +27,24 @@ tasks:
   pool: "{{pool}}"
   versionBuild: "{{version}}"
   boxList:
-  - name: tsb1cms003
-    ip: 192.168.163.68
-    boxType: cmssvr
-  - name: tsb1cms004
-    ip: 192.168.163.69
-    boxType: cmssvr                         
+  - name: clhf3esc001
+    ip: 10.224.89.13
+    boxType: escsvr
+  - name: clhf3esc002
+    ip: 10.224.89.14
+    boxType: escsvr  
+  - name: clhf3esd001
+    ip: 10.224.89.15
+    boxType: esdsvr    
+  - name: clhf3esd002
+    ip: 10.224.89.16
+    boxType: esdsvr    
+  - name: clhf3esd003
+    ip: 10.224.89.17
+    boxType: esdsvr    
+  - name: clhf3esm001
+    ip: 10.224.89.18
+    boxType: esmsvr                                           
     ''' % (component, poolname, service_version, build_no)
 
     url = "https://%s/cmc/api/playbook/" % cmcurl
@@ -41,9 +53,9 @@ tasks:
         f.write(playbook)
     files = {'playbook': open(filename, 'rb')}
     req = requests.post(url, files=files, headers=headers)
-    # os.remove(filename)
+    os.remove(filename)
     print(req.text)
 
 
 if __name__ == "__main__":
-    registerbox('cms', 'tsb1', '3.1.0', '1515')
+    registerbox('esaas', 'clhf3', '6.5.4', '1901')

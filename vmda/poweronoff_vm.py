@@ -90,9 +90,6 @@ def main():
         container, viewType, recursive)
 
     children = containerView.view
-    vmlist = []
-    ct74 = []
-    ct69 = []
     vmlist = [vm.name for vm in children if re.search(args.vm_name, vm.name)]
     ct74 = list(filter(lambda x: re.search('ct74', x), vmlist))
     ct69 = list(filter(lambda x: not re.search('ct74', x), vmlist))

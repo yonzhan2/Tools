@@ -142,7 +142,9 @@ def main():
         objView.Destroy()
 
         # Find the vm and power it on
-        tasks = [vm.PowerOff() for vm in vmList if vm.name in vmnames]
+        tasks = [vm.PowerOff() for vm in vmList if vm.name == vmnames]
+
+        tasks = [vm.PowerOn() for vm in vmList if vm.name == vmnames]
 
         # Wait for power on to complete
         WaitForTasks(tasks, si)

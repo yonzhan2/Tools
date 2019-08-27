@@ -707,15 +707,15 @@
 # #
 # # print(socket.gethostbyname('jhf3tc001.qa.webex.com'))
 # #
-# # import requests,json
-# #
-# # headers={"Jenkins-Crumb": "19ea266a31e27d99328d0612c397deed"}
-# # data = {"parameter": [{"name": "release_version", "value": "32.10.0"}, {"name": "feature_num", "value": "5672"}, {"name": "client_buildnum", "value": ""}]}
-# # #data= json.loads(formdata)
-# #
-# # r = requests.post(url='http://admin:pass@10.224.38.201:8080/job/deployclient4f7865/buildWithParameters',headers=headers,data=data)
-# # #r = requests.post(url='http://admin:pass@10.224.38.201:8080/job/GetVersionList4ATS/build?delay=0sec',headers=headers)
-# # print(r.content)
+# import requests,json
+#
+# headers={"Jenkins-Crumb": "19ea266a31e27d99328d0612c397deed"}
+# data = {"parameter": [{"name": "release_version", "value": "39.6.0"}, {"name": "feature_num", "value": "10863"}, {"name": "client_buildnum", "value": ""}]}
+# #data= json.loads(formdata)
+#
+# r = requests.post(url='http://admin:pass@10.224.38.201:8080/job/deployclient4f10863/buildWithParameters',headers=headers,data=data)
+# #r = requests.post(url='http://admin:pass@10.224.38.201:8080/job/GetVersionList4ATS/build?delay=0sec',headers=headers)
+# print(r.content)
 # #
 #
 # #!/usr/bin/env python
@@ -873,6 +873,8 @@
 # if __name__ == "__main__":
 #     main()
 #
+import asyncio
+
 import requests
 # from novaclient import client
 # from novaclient import base
@@ -1134,54 +1136,54 @@ from pprint import pprint
 # print(y)
 
 
-from IPy import IP
-
-netmask = "255.255.224.0"
-gateway = "10.224.56.1"
-ip = IP('10.224.56.0/23')
-vlanid = 50
-print("IP\t NetMask\t GateWay\t VlanId")
-for i in ip:
-    print(i, netmask, gateway, vlanid)
-
-
-class ManipulateDataToMongo(object):
-    def __init__(self):
-        self.client = pymongo.MongoClient("mongodb://{0}:2701/".format(MONGODB))
-        self.mydb = self.client["build"]
-        self.mycoll = self.mydb["buildinfo"]
-
-    def querydata(self, ipaddr):
-
-        try:
-            myquery = {"ipaddr": ipaddr}
-            ret = self.mycoll.find_one(myquery)
-            if ret:
-                return True
-            return
-        except Exception as e:
-            print(("Error %d: %s" % (e.args[0], e.args[1])))
-
-    def insertdata(self, env, type, build, hostname, ipaddr):
-
-        try:
-            mydict = {"env": env, "type": type, "build": build, "hostname": hostname, "ipaddr": ipaddr,
-                      "createtime": getCurrentTime()}
-            if build and ipaddr:
-                self.mycoll.insert_one(mydict)
-            print(("inserted done for %s" % hostname))
-        except Exception as e:
-            print(("Error %d: %s" % (e.args[0], e.args[1])))
-
-    def updatedata(self, env, type, build, hostname, ipaddr):
-
-        try:
-            myquery = {"ipaddr": ipaddr}
-            newvalues = {"$set": {"env": env, "type": type, "build": build, "hostname": hostname}}
-            self.mycoll.update_one(myquery, newvalues)
-            print(("updated build info done for %s" % ipaddr))
-        except Exception as e:
-            print(("Error %d: %s" % (e.args[0], e.args[1])))
+# from IPy import IP
+#
+# netmask = "255.255.224.0"
+# gateway = "10.224.56.1"
+# ip = IP('10.224.56.0/23')
+# vlanid = 50
+# print("IP\t NetMask\t GateWay\t VlanId")
+# for i in ip:
+#     print(i, netmask, gateway, vlanid)
+#
+#
+# class ManipulateDataToMongo(object):
+#     def __init__(self):
+#         self.client = pymongo.MongoClient("mongodb://{0}:2701/".format(MONGODB))
+#         self.mydb = self.client["build"]
+#         self.mycoll = self.mydb["buildinfo"]
+#
+#     def querydata(self, ipaddr):
+#
+#         try:
+#             myquery = {"ipaddr": ipaddr}
+#             ret = self.mycoll.find_one(myquery)
+#             if ret:
+#                 return True
+#             return
+#         except Exception as e:
+#             print(("Error %d: %s" % (e.args[0], e.args[1])))
+#
+#     def insertdata(self, env, type, build, hostname, ipaddr):
+#
+#         try:
+#             mydict = {"env": env, "type": type, "build": build, "hostname": hostname, "ipaddr": ipaddr,
+#                       "createtime": getCurrentTime()}
+#             if build and ipaddr:
+#                 self.mycoll.insert_one(mydict)
+#             print(("inserted done for %s" % hostname))
+#         except Exception as e:
+#             print(("Error %d: %s" % (e.args[0], e.args[1])))
+#
+#     def updatedata(self, env, type, build, hostname, ipaddr):
+#
+#         try:
+#             myquery = {"ipaddr": ipaddr}
+#             newvalues = {"$set": {"env": env, "type": type, "build": build, "hostname": hostname}}
+#             self.mycoll.update_one(myquery, newvalues)
+#             print(("updated build info done for %s" % ipaddr))
+#         except Exception as e:
+#             print(("Error %d: %s" % (e.args[0], e.args[1])))
 
 #
 # class Car():
@@ -1277,3 +1279,695 @@ class ManipulateDataToMongo(object):
 # car.increate_odemeter(10)
 # car.get_odemeter()
 # print(car._Car__odemeter_reading )
+
+
+import requests, json
+from bs4 import BeautifulSoup as bs4
+import pprint
+
+#
+# headers={"Jenkins-Crumb": "19ea266a31e27d99328d0612c397deed"}
+# data = {"parameter": [{"name": "release_version", "value": "39.6.0"}, {"name": "feature_num", "value": "10863"}, {"name": "client_buildnum", "value": ""}]}
+# #data= json.loads(formdata)
+#
+# r = requests.post(url='http://10.224.38.201:8080/job/deployclient4f10863/buildWithParameters',headers=headers,data=data,auth=('admin','pass'))
+# print(r.headers.get("Location"))
+# if r.status_code == 201:
+#     print("Success")
+# else:
+#     print("Fail")
+#
+#
+#
+# import re
+#
+# username = 'admin'
+# password = 'pass'
+# auth = requests.auth.HTTPBasicAuth(username, password)
+#
+# parameter_pattern = re.compile('<input name="name" type="hidden" value="(.*?)"/>')
+# value_pattern = re.compile('<input class="setting-input" name="value" type="text" value="(.*?)"/>')
+#
+# url = "http://10.224.38.201:8080/job/deployclient4f10150/build?delay=0sec"
+# # url = "http://10.224.38.201:8080/job/deploypage4train/build?delay=0sec"
+#
+# "Get release_version parameter"
+# clientid = 200
+# try:
+#     r = requests.get(url, timeout=5, auth=auth)
+#     soup = bs4(r.content, 'html.parser')
+#     name_value = soup.select('div input[name="name"]')
+#     input_value = soup.select('div input[name="value"]')  # soup.find_all(type="text")
+#     name_value = str(name_value)
+#     input_value = str(input_value)
+#     # print(name_value)
+#     # print(input_value)
+#     parameters = parameter_pattern.findall(name_value)
+#     values = value_pattern.findall(input_value)
+#     pvmap = zip(parameters, values)
+#     params_format = [{"name": p[0], "value": p[1]} for p in list(pvmap)]
+#     print(params_format)
+#     if clientid:
+#         params_format[2]["value"] = str(clientid)
+#     client_data = {"parameter": params_format}
+#
+#     print("params_format is ", json.dumps(client_data))
+#
+#     print('TEst'.lower())
+# except Exception as e:
+#     print("Get paramter failed due to {}".format(e))
+#
+# str = 'failover';
+# print(str.startswith("upgrade|fail|maintain"))
+#
+# from pprint import pprint
+#
+# CMCURL_MAPPING = {"QA": {"URL": "csgcmc.qa.webex.com",
+#                          "KEY": "Q01DUUFfQVBJX0hGQ0lfa2V5OjdlMGRhNmU4ODk1MzRkMjQ4N2IwZjI4MzQ0OWIwM2Q4="},
+#                   "DMZ": {"URL": "sjcmc.dmz.webex.com",
+#                           "KEY": "Q01DQVBJX0RNWjo5M2IyOGNiNzQ4NjM0YmJmYTI4YWZkNWVhODQ2NGY3Mg=="}}
+# cmcurl = CMCURL_MAPPING.get('QA').get("URL")
+# key = CMCURL_MAPPING.get('QA').get("KEY")
+# headers = dict(Authorization=f"Basic {key}")
+#
+#
+# def getserverbypool(component, pool):
+#     # pool, filtertype = self.getpoolinfo()
+#     box_url = 'https://%s/cmc/api/sitBoxList/%s/?pool=%s&ignore_owner=yes' % (cmcurl, component, pool)
+#     req = requests.get(box_url, headers=headers)
+#     ret = req.json().get('rows')
+#     servers = [(server.get('id'), server.get('name')) for server in ret]
+#     pprint(servers)
+#
+#
+# # getserverbypool('j2ee','jhf3')
+#
+# def getmbs():
+#     url = "https://train.qa.webex.com/webappng/healthcheck"
+#     req = requests.get(url, headers=headers)
+#     print(json.loads(req.content))
+#     mbsver = 'WBXmbs2-' + json.loads(req.content).get("mbs").get("version")
+#     print(mbsver)
+#
+#
+# # getmbs()
+#
+# async def stop(msg, time):
+#     await asyncio.sleep(time)
+#     print("stop" + msg)
+
+
+#
+# class ThreeTwoOne:
+#     async def begin(self):
+#         begin=time.time()
+#         print(3)
+#
+#         await stop('cc',5)
+#         print(2)
+#         await stop('as',3)
+#         print(1)
+#         await stop('ts',1)
+#         end = time.time()
+#         print("time is ", end - begin)
+#         return
+#
+# async def game():
+#     t = ThreeTwoOne()
+#     await t.begin()
+#     print('start')
+
+# def main():
+#     import asyncio
+#     loop = asyncio.get_event_loop()
+#     tasks = [stop('cc', 60), stop('as', 30), stop('ts', 20)]
+#     begin = time.time()
+#     res = loop.run_until_complete(asyncio.wait(tasks))
+#     end = time.time()
+#     loop.close()
+#     time.sleep(0)
+#     print("time is ", end - begin)
+#
+#
+# #main()
+#
+# def foo(bar, baz):
+#   print('hello {0}'.format(bar))
+#   time.sleep(5)
+#   return 'foo' + baz
+#
+# def foo1(bar, baz):
+#   print('hello1 {0}'.format(bar))
+#   time.sleep(3)
+#   return 'foo1' + baz
+#
+# from multiprocessing.pool import ThreadPool
+# #pool = ThreadPool(processes=1)
+#
+# from multiprocessing import Pool,cpu_count
+# pool = Pool(cpu_count())
+
+# begin=time.time()
+# async_result = pool.apply_async(foo, ('world', 'foo')) # tuple of args for foo
+# async_result1 = pool.apply_async(foo1, ('world', 'foo')) # tuple of args for foo
+# do some other stuff in the main process
+
+# return_val = async_result.get()
+# return_val1 = async_result1.get()
+# end=time.time()
+# col_time=end-begin
+# print(return_val)
+# print(return_val1)
+# print("Col_time:" ,col_time)
+#
+# str = 'j2ee in qa with pool=t02fa'
+# str1 = 'j2ee in qa with pool=t02fa server like as001'
+# ret1 = cmc_pattern_with_server.findall(str1)
+# print(ret1)
+# ret = cmc_pattern_without_server.findall(str)
+# print(ret)
+
+# post_data = extract_message("refresh", post_data.text).strip()
+# post_data = 'j2ee in qa with pool=t02fa server like as001' ##[('j2ee', 'qa', 't02fa', 'as001')]
+# post_data = 'j2ee in qa with pool=t02fa version=5.6.0-0100'   ##[('j2ee', 'qa', 't02fa', '5.6.0-0100')]
+# post_data = 'j2ee in qa with pool=t02fa'  ##[('j2ee', 'qa', 't02fa')]
+# cmc_pattern_with_version = re.compile("(.*)\s* in\s* (dmz|qa|eng)\s* with\s* pool=(.*)\s* version=(.*)\s*", re.I)
+# cmc_pattern_with_server = re.compile("(.*)\s* in\s* (dmz|qa|eng)\s* with\s* pool=(.*)\s* server\s* like\s* (.*)", re.I)
+# cmc_pattern_without_server = re.compile("(.*)\s* in\s* (dmz|qa|eng)\s* with\s* pool=(.*)\s*", re.I)
+# box=None
+# version=None
+#
+# try:
+#     if "server" in post_data:
+#         p_result = cmc_pattern_with_server.findall(post_data)
+#         print(p_result)
+#         service, env, pool, box = p_result[0]
+#     elif "version" in post_data:
+#         p_result = cmc_pattern_with_version.findall(post_data)
+#         print(p_result)
+#         service, env, pool, version = p_result[0]
+#     else:
+#         p_result = cmc_pattern_without_server.findall(post_data)
+#         print(p_result)
+#         service, env, pool= p_result[0]
+#
+#     #sys.stderr.write("p_result is {}".format(p_result))
+#
+#     service = service.strip()
+#     env = env.strip()
+#     pool = pool.strip()
+#     if box:
+#         box = box.strip()
+#     if version:
+#         version = version.strip()
+# except Exception as e:
+#     pass
+#     return "`- refresh (component_name) in (dmz|qa|eng) with pool=<pool_name> [version=<cmc version>][server like <server as reg>]`"
+
+# print(service)
+# print(env)
+# print(pool)
+# print(version)
+# print(box)
+
+#
+# import jenkins
+# from pprint import pprint
+#
+# server = jenkins.Jenkins('http://10.224.38.201:8080', username='admin', password='pass')
+# user = server.get_whoami()
+# version = server.get_version()
+# print('Hello %s from Jenkins %s' % (user['fullName'], version))
+# print(server.jobs_count())
+#
+# jobs = server.get_jobs()
+# #pprint(jobs)
+# project='deployclient4f10150'
+# #server.build_job(project, {'release_version': '39.7.0', 'client_buildnum': ''})
+# #time.sleep(10)
+# current_job_info = server.get_job_info(project)
+# last_build_number = server.get_job_info(project)['lastBuild']['number']
+# last_completed_build = server.get_job_info(project)['lastCompletedBuild']['number']
+# try:
+#     last_failed_build = server.get_job_info(project)['lastFailedBuild']['number']
+# except Exception as e:
+#     last_failed_build = None
+# last_build_url = server.get_job_info(project)['lastBuild']['url']
+# pprint(f"last_build_number is {last_build_number}")
+# pprint(f"last_build_url is {last_build_url}")
+# pprint(current_job_info)
+# pprint(f"last_completed_build is {last_completed_build}")
+# pprint(f"last_failed_build is {last_failed_build}")
+# #
+# #print(build_info)
+# feature_num='thinclient'
+# def get_result(build_number):
+#     while True:
+#         last_completed_build_number = server.get_job_info(project)['lastCompletedBuild']['number']
+#         last_failed_build = server.get_job_info(project)['lastFailedBuild']['number']
+#         print(f"Last completed build is {last_completed_build_number}, failed build is {last_failed_build}.")
+#         if last_failed_build == build_number:
+#             return False
+#         if last_completed_build_number != build_number:
+#             print("Sleep 10s")
+#             time.sleep(10)
+#             get_result(build_number)
+#         else:
+#             return True
+#
+#
+# if get_result(last_build_number):
+#     print( f"upgraded job for {feature_num} success.")
+# else:
+#     print( f"upgraded job for {feature_num} failed.")
+
+from datetime import datetime
+from bs4 import BeautifulSoup as bs4
+from pprint import pprint
+
+xml = '''
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>me01sqvce101 - Zones</title><meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<link rel="stylesheet" type="text/css" href="/inc/allstyles.css?etag=68270-1537279821" />
+<script type="text/javascript" src="/inc/thirdpartyscripts.js?etag=475041-1537279821"></script>
+<script type="text/javascript" src="/inc/allscripts.js?etag=112617-1537279821"></script>
+<style type="text/css">
+</style>
+<script type="text/javascript">//<![CDATA[
+var table_sorter;function initSorter(){table_sorter = new TableTools("zones_table_table");table_sorter.setDefaultSortColumn( 'Name', true );table_sorter.setSortByType('Name' , 'presort');table_sorter.addtopresort('Name','DefaultZone'  );table_sorter.init();}$(window).on('load', initSorter);function dtf_filterResults( value ){table_sorter.filter( value );tableResize.resize();return false;}$(window).on('load', function(event) {form_update(document.forms);});$(window).on('load', function(){new DigitalClock('clock', 1563830985);});
+$(window).on('resize', function(){handle_window_resize();});
+warningcheckintervalmultiplier = 30;
+//]]>
+</script>
+<link rel="shortcut icon" href="/favicon.ico" type="image/vnd.microsoft.icon"/>
+<link rel="icon" href="/favicon.ico" type="image/vnd.microsoft.icon"/>
+</head>
+<body>
+<div id="ttFwHeader">
+<div id="header_title">
+<div id="header_logo">
+<a href="/overview"><img src="/inc/cisco.png?etag=1640-1537279820" style="width:85px;height:59px;" alt="Cisco" title="Cisco" /></a>
+<span class='header_product_logo header_product_logo_category' >
+Cisco TelePresence</span>
+<span class='header_product_logo' >
+Video Communication Server Expressway</span>
+<a href="#ttFwContent" title="Skip page navigation." class="navjump">Skip page navigation</a></div>
+</div>
+<div class="popupbubble" id="warningpopup" style="display:none;"><div class="popupbubble_le"><div class="popupbubble_ri"><a href="alarms" class="popupbubble_ct">This system has 4 alarms</a></div></div></div><div id="header_icons"><a href="alarms" id="warningicon"><img src="/inc/warning.gif?etag=560-1537279820" style="width:15px;height:15px;" alt="This system has 4 alarms" title="This system has 4 alarms"  id="warningimg"/></a>
+<a href="/inc/help/en_US.utf8/VCS_help_CSH.htm#zones" onclick="return openHelpWindow('/inc/help/en_US.utf8/VCS_help_CSH.htm#zones', true, 'MCWebHelpXC');"><img src="/inc/icon_help.gif?etag=1070-1537279820" style="width:16px;height:16px;" alt="Help on this page" title="Help on this page" /></a>
+<a href="/inc/help/en_US.utf8/VCS_help_CSH.htm#zones" class="icontext" onclick="return openHelpWindow('/inc/help/en_US.utf8/VCS_help_CSH.htm#zones', true, 'MCWebHelpXC');;return false;" >Help </a><a href="logout"><img src="/inc/icon_logout.gif?etag=1064-1537279820" style="width:16px;height:16px;" alt="Log out" title="Log out" /></a>
+<a href="logout" class="icontext">Logout</a> </div><div id="header_menu">
+<ul id="m2" style="display: none;">
+<li><a href="overview"onclick='return false;'>Status</a><ul><li><a href="overview">Overview</a></li>
+<li><a href="alarms">Alarms</a></li>
+<li><a href="systeminformation"onclick='return false;'>System</a><ul><li><a href="systeminformation">Information</a></li>
+<li><a href="ethernetstatus">Ethernet</a></li>
+<li><a href="ipstatus">IP</a></li>
+<li><a href="resourceusage">Resource usage</a></li>
+</ul></li>
+<li><a href="registrations"onclick='return false;'>Registrations</a><ul><li><a href="registrations">By device</a></li>
+<li><a href="registrationsbyalias">By alias</a></li>
+<li><a href="registrationhistory">History</a></li>
+</ul></li>
+<li><a href="calls"onclick='return false;'>Calls</a><ul><li><a href="calls">Calls</a></li>
+<li><a href="callhistory">History</a></li>
+</ul></li>
+<li><a href="searchhistory">Search history</a></li>
+<li><a href="localzonestatus">Local Zone</a></li>
+<li><a href="zonestatus">Zones</a></li>
+<li><a href="linkstatus"onclick='return false;'>Bandwidth</a><ul><li><a href="linkstatus">Links</a></li>
+<li><a href="pipestatus">Pipes</a></li>
+</ul></li>
+<li><a href="policyservicestatus">Policy services</a></li>
+<li><a href="turnrelays">TURN relay usage</a></li>
+<li><a href="edgestatus">Unified Communications status</a></li>
+<li><a href="publishers"onclick='return false;'>Applications</a><ul><li><a href="publishers"onclick='return false;'>Presence</a><ul><li><a href="publishers">Publishers</a></li>
+<li><a href="presentities">Presentities</a></li>
+<li><a href="subscribers">Subscribers</a></li>
+</ul></li>
+<li><a href="b2buastatus">Microsoft interoperability</a></li>
+</ul></li>
+<li><a href="hardware">Hardware</a></li>
+<li><a href="eventlog"onclick='return false;'>Logs</a><ul><li><a href="eventlog">Event Log</a></li>
+<li><a href="configurationlog">Configuration Log</a></li>
+<li><a href="networklog">Network Log</a></li>
+</ul></li>
+</ul></li>
+<li><a href="system"onclick='return false;'>System</a><ul><li><a href="system">Administration settings</a></li>
+<li><a href="#"onclick='return false;'>Network interfaces</a><ul><li><a href="ethernet">Ethernet</a></li>
+<li><a href="ip">IP</a></li>
+<li><a href="routeadd">Static routes</a></li>
+</ul></li>
+<li><a href="dns">DNS</a></li>
+<li><a href="time">Time</a></li>
+<li><a href="snmp">SNMP</a></li>
+<li><a href="clustering">Clustering</a></li>
+<li><a href="#"onclick='return false;'>Protection</a><ul><li><a href="#"onclick='return false;'>Firewall rules</a><ul><li><a href="firewallrulesconfig">Configuration</a></li>
+<li><a href="activefirewallrules">Current active rules</a></li>
+</ul></li>
+<li><a href="protectionoverview"onclick='return false;'>Automated detection</a><ul><li><a href="protectionoverview">Configuration</a></li>
+<li><a href="protectionexemptions">Exemptions</a></li>
+<li><a href="protectionbanlist">Blocked addresses</a></li>
+</ul></li>
+</ul></li>
+<li><a href="uploadwelcomemessage">Login page</a></li>
+<li><a href="qos">Quality of Service</a></li>
+<li><a href="externalmanager">External manager</a></li>
+<li><a href="tmsservices">TMS Provisioning Extension services</a></li>
+</ul></li>
+<li><a class=" selected" href="h323"onclick='return false;'>Configuration</a><ul><li><a href="h323"onclick='return false;'>Protocols</a><ul><li><a href="h323">H.323</a></li>
+<li><a href="sip">SIP</a></li>
+<li><a href="interworking">Interworking</a></li>
+</ul></li>
+<li><a href="registrationconfig"onclick='return false;'>Registration</a><ul><li><a href="registrationconfig">Configuration</a></li>
+<li><a href="allowlist">Allow List</a></li>
+<li><a href="denylist">Deny List</a></li>
+</ul></li>
+<li><a href="outboundconnectioncredentials"onclick='return false;'>Authentication</a><ul><li><a href="outboundconnectioncredentials">Outbound connection credentials</a></li>
+<li><a href="credentials"onclick='return false;'>Devices</a><ul><li><a href="credentials">Local database</a></li>
+<li><a href="ntlm">Active Directory Service</a></li>
+<li><a href="ldap">H.350 directory service</a></li>
+<li><a href="ldapschemas">H.350 directory schemas</a></li>
+</ul></li>
+</ul></li>
+<li><a href="callconfig">Call routing</a></li>
+<li><a href="defaultsubzone"onclick='return false;'>Local Zone</a><ul><li><a href="defaultsubzone">Default Subzone</a></li>
+<li><a href="traversalsubzone">Traversal Subzone</a></li>
+<li><a href="subzones">Subzones</a></li>
+<li><a href="membershiprules">Subzone membership rules</a></li>
+</ul></li>
+<li><a class=" selected" href="zones"onclick='return false;'>Zones</a><ul><li><a class=" selected" href="zones">Zones</a></li>
+<li><a href="defaultzoneaccessrules">Default Zone access rules</a></li>
+</ul></li>
+<li><a href="domains">Domains</a></li>
+<li><a href="edge"onclick='return false;'>Unified Communications</a><ul><li><a href="edge">Configuration</a></li>
+<li><a href="staticroutes">Federated static routes</a></li>
+<li><a href="federationallowlist">Federated domains allow list</a></li>
+<li><a href="federationdenylist">Federated domains deny list</a></li>
+</ul></li>
+<li><a href="dialplanconfig"onclick='return false;'>Dial plan</a><ul><li><a href="dialplanconfig">Configuration</a></li>
+<li><a href="transforms">Transforms</a></li>
+<li><a href="searchrules">Search rules</a></li>
+<li><a href="policyservices">Policy services</a></li>
+</ul></li>
+<li><a href="bandwidth"onclick='return false;'>Bandwidth</a><ul><li><a href="bandwidth">Configuration</a></li>
+<li><a href="links">Links</a></li>
+<li><a href="pipes">Pipes</a></li>
+</ul></li>
+<li><a href="ports"onclick='return false;'>Traversal</a><ul><li><a href="ports">Ports</a></li>
+<li><a href="turn">TURN</a></li>
+<li><a href="locallyregisteredendpoints">Locally registered endpoints</a></li>
+</ul></li>
+<li><a href="adminpolicy"onclick='return false;'>Call Policy</a><ul><li><a href="adminpolicy">Configuration</a></li>
+<li><a href="callpolicywizard">Rules</a></li>
+</ul></li>
+</ul></li>
+<li><a href="conferencefactory"onclick='return false;'>Applications</a><ul><li><a href="conferencefactory">Conference Factory</a></li>
+<li><a href="presence">Presence</a></li>
+<li><a href="b2buaconfig"onclick='return false;'>B2BUA</a><ul><li><a href="b2buaconfig"onclick='return false;'>Microsoft interoperability</a><ul><li><a href="b2buaconfig">Configuration</a></li>
+<li><a href="b2bualisteners">Trusted hosts</a></li>
+<li><a href="b2buatranscoders">External transcoders</a></li>
+<li><a href="b2buarules">External transcoder policy rules</a></li>
+<li><a href="b2buarestart">Restart service...</a></li>
+</ul></li>
+<li><a href="b2buaturn">B2BUA TURN servers</a></li>
+</ul></li>
+<li><a href="userpolicy">FindMe</a></li>
+<li><a href="fusioncerts">Cloud Certificate management</a></li>
+</ul></li>
+<li><a href="adminaccounts"onclick='return false;'>Users</a><ul><li><a href="adminpasswordsecurity">Password security</a></li>
+<li><a href="adminaccounts">Administrator accounts</a></li>
+<li><a href="admingroups">Administrator groups</a></li>
+<li><a href="adminsessions">Active administrator sessions</a></li>
+<li><a href="loginldap">LDAP configuration</a></li>
+</ul></li>
+<li><a href="upgrade"onclick='return false;'>Maintenance</a><ul><li><a href="upgrade">Upgrade</a></li>
+<li><a href="logging">Logging</a></li>
+<li><a href="optionkeys">Option keys</a></li>
+<li><a href="loggingsnapshot"onclick='return false;'>Tools</a><ul><li><a href="locate">Locate</a></li>
+<li><a href="checkpattern">Check pattern</a></li>
+<li><a href="localportlist"onclick='return false;'>Port usage</a><ul><li><a href="localportlist">Local inbound ports</a></li>
+<li><a href="sourceportlist">Local outbound ports</a></li>
+<li><a href="remoteportlist">Remote listening ports</a></li>
+</ul></li>
+<li><a href="ping"onclick='return false;'>Network utilities</a><ul><li><a href="ping">Ping</a></li>
+<li><a href="traceroute">Traceroute</a></li>
+<li><a href="tracepath">Tracepath</a></li>
+<li><a href="dnslookup">DNS lookup</a></li>
+<li><a href="connectivitytest">Connectivity test</a></li>
+</ul></li>
+</ul></li>
+<li><a href="trustedcacertificate"onclick='return false;'>Security</a><ul><li><a href="trustedcacertificate">Trusted CA certificate</a></li>
+<li><a href="servercertificate">Server certificate</a></li>
+<li><a href="crlupdater">CRL management</a></li>
+<li><a href="certificatetesting">Client certificate testing</a></li>
+<li><a href="cbaconfig">Certificate-based authentication configuration</a></li>
+<li><a href="domaincertificate">Domain certificates</a></li>
+<li><a href="ciphers">Ciphers</a></li>
+<li><a href="sshconfig">SSH configuration</a></li>
+</ul></li>
+<li><a href="backuprestore">Backup and restore</a></li>
+<li><a href="loggingsnapshot"onclick='return false;'>Diagnostics</a><ul><li><a href="loggingsnapshot">Diagnostic logging</a></li>
+<li><a href="snapshot">System snapshot</a></li>
+<li><a href="incidentreporting"onclick='return false;'>Incident reporting</a><ul><li><a href="incidentreporting">Configuration</a></li>
+<li><a href="incidentview">View</a></li>
+</ul></li>
+<li><a href="networkloglevels"onclick='return false;'>Advanced</a><ul><li><a href="networkloglevels">Network Log configuration</a></li>
+<li><a href="developerloglevels">Support Log configuration</a></li>
+</ul></li>
+<li><a href="hybridservicesloglevels">Hybrid Services Log Levels</a></li>
+</ul></li>
+<li><a href="maintenancemode">Maintenance mode</a></li>
+<li><a href="webprefs">Language</a></li>
+<li><a href="maintenancemode"onclick='return false;'>Serviceability</a><ul><li><a href="sch">Smart Call Home</a></li>
+</ul></li>
+<li><a href="restartoptions">Restart options</a></li>
+</ul></li>
+</ul></div> <!-- menu -->
+<div id="header_location">
+<div id="header_location_title">
+<span>Zones</span>
+</div>
+<div id="header_location_map">
+<span>You are here:</span>
+<span>
+<a href="h323">Configuration</a>
+<img src="/inc/bullet.gif?etag=57-1537279820" style="width:8px;height:7px;" alt="" title="" /><a href="zones">Zones</a>
+<img src="/inc/bullet.gif?etag=57-1537279820" style="width:8px;height:7px;" alt="" title="" />Zones
+</span>
+</div>
+</div>
+</div>
+<div id="ttFwContent">
+<div id="content" class="layout">
+<form class='tt_form' name="zones_table" id="zones_table" method="post" action="zones" ><div class="scrollable_table_container"><div class="scrollable_thead_container" style="display:none;"><table class="status_table"><thead>
+<tr>
+<th align="center" style="width:30px;"></th>
+<th><a href="#" onclick="table_sorter.sort('Name',true);return false;">Name</a><img src="/inc/tablesort_asc.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowUpSort1"/><img src="/inc/tablesort_des.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowDownSort1"/></th>
+<th><a href="#" onclick="table_sorter.sort('Type',true);return false;">Type</a><img src="/inc/tablesort_asc.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowUpSort2"/><img src="/inc/tablesort_des.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowDownSort2"/></th>
+<th><a href="#" onclick="table_sorter.sort('Calls',true);return false;">Calls</a><img src="/inc/tablesort_asc.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowUpSort3"/><img src="/inc/tablesort_des.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowDownSort3"/></th>
+<th><a href="#" onclick="table_sorter.sort('Bandwidth used',true);return false;">Bandwidth used</a><img src="/inc/tablesort_asc.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowUpSort4"/><img src="/inc/tablesort_des.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowDownSort4"/></th>
+<th><a href="#" onclick="table_sorter.sort('H323 status',true);return false;">H323 status</a><img src="/inc/tablesort_asc.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowUpSort5"/><img src="/inc/tablesort_des.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowDownSort5"/></th>
+<th><a href="#" onclick="table_sorter.sort('SIP status',true);return false;">SIP status</a><img src="/inc/tablesort_asc.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowUpSort6"/><img src="/inc/tablesort_des.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowDownSort6"/></th>
+<th><a href="#" onclick="table_sorter.sort('Search rule status',true);return false;">Search rule status</a><img src="/inc/tablesort_asc.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowUpSort7"/><img src="/inc/tablesort_des.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowDownSort7"/></th>
+<th>Actions</th>
+</tr>
+</thead>
+</table></div><div class="scrollable_tbody_container"><div>
+<table class="status_table" id='zones_table_table' >
+<thead>
+<tr>
+<th align="center" style="width:30px;"></th>
+<th><a href="#" onclick="table_sorter.sort('Name',true);return false;">Name</a><img src="/inc/tablesort_asc.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowUpSort1"/><img src="/inc/tablesort_des.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowDownSort1"/></th>
+<th><a href="#" onclick="table_sorter.sort('Type',true);return false;">Type</a><img src="/inc/tablesort_asc.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowUpSort2"/><img src="/inc/tablesort_des.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowDownSort2"/></th>
+<th><a href="#" onclick="table_sorter.sort('Calls',true);return false;">Calls</a><img src="/inc/tablesort_asc.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowUpSort3"/><img src="/inc/tablesort_des.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowDownSort3"/></th>
+<th><a href="#" onclick="table_sorter.sort('Bandwidth used',true);return false;">Bandwidth used</a><img src="/inc/tablesort_asc.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowUpSort4"/><img src="/inc/tablesort_des.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowDownSort4"/></th>
+<th><a href="#" onclick="table_sorter.sort('H323 status',true);return false;">H323 status</a><img src="/inc/tablesort_asc.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowUpSort5"/><img src="/inc/tablesort_des.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowDownSort5"/></th>
+<th><a href="#" onclick="table_sorter.sort('SIP status',true);return false;">SIP status</a><img src="/inc/tablesort_asc.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowUpSort6"/><img src="/inc/tablesort_des.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowDownSort6"/></th>
+<th><a href="#" onclick="table_sorter.sort('Search rule status',true);return false;">Search rule status</a><img src="/inc/tablesort_asc.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowUpSort7"/><img src="/inc/tablesort_des.gif?etag=114-1537279820" style="" alt="" title=""  class="tableSortArrow arrowDownSort7"/></th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody class="status_table_highlight" id="zones_table_tbody">
+<tr>
+<td align="center" style="width:30px;"></td><td><a href="defaultzone">DefaultZone</a></td><td>Default zone</td>
+<td>0</td>
+<td>0 kbps</td>
+<td>On</td>
+<td>On</td>
+<td></td>
+<td><a href='defaultzone'>View/Edit</a></td></tr>
+<tr>
+<td class="checkbox-cell" align="center" style="width:30px;"><input type="checkbox" name="selection[1]" value="1" onclick="form_update($(this.form));event.cancelBubble=true;"/></td><td><a href="editzone?id=1">e-CUSP</a></td><td>Neighbor</td>
+<td>0</td>
+<td>0 kbps</td>
+<td>Off</td>
+<td>Active</td>
+<td><p>Enabled <a href="searchrules?target=ZS1DVVNQ&enabled=Enabled">search rules</a>: 5</p></td><td><a href='editzone?id=1'>View/Edit</a></td></tr>
+<tr>
+<td class="checkbox-cell" align="center" style="width:30px;"><input type="checkbox" name="selection[2]" value="2" onclick="form_update($(this.form));event.cancelBubble=true;"/></td><td><a href="editzone?id=2">i-CUSP-internet</a></td><td>Neighbor</td>
+<td>0</td>
+<td>0 kbps</td>
+<td>Off</td>
+<td>Active</td>
+<td><p>Enabled <a href="searchrules?target=aS1DVVNQLWludGVybmV0&enabled=Enabled">search rules</a>: 2</p></td><td><a href='editzone?id=2'>View/Edit</a></td></tr>
+<tr>
+<td class="checkbox-cell" align="center" style="width:30px;"><input type="checkbox" name="selection[3]" value="3" onclick="form_update($(this.form));event.cancelBubble=true;"/></td><td><a href="editzone?id=3">i-CUSP-WebEx</a></td><td>Neighbor</td>
+<td>0</td>
+<td>0 kbps</td>
+<td>Off</td>
+<td>Active</td>
+<td><p>Disabled <a href="searchrules?target=aS1DVVNQLVdlYkV4&enabled=Disabled">search rules</a>: 3</p></td><td><a href='editzone?id=3'>View/Edit</a></td></tr>
+<tr>
+<td class="checkbox-cell" align="center" style="width:30px;"><input type="checkbox" name="selection[4]" value="4" onclick="form_update($(this.form));event.cancelBubble=true;"/></td><td><a href="editzone?id=4">Ben_testzone</a></td><td>Neighbor</td>
+<td>0</td>
+<td>0 kbps</td>
+<td>Off</td>
+<td>Failed</td>
+<td><p>No <a href="searchrules">search rules</a> configured</p></td><td><a href='editzone?id=4'>View/Edit</a></td></tr>
+<tr>
+<td class="checkbox-cell" align="center" style="width:30px;"><input type="checkbox" name="selection[5]" value="5" onclick="form_update($(this.form));event.cancelBubble=true;"/></td><td><a href="editzone?id=5">eCP-3.5</a></td><td>Neighbor</td>
+<td>3</td>
+<td>8992 kbps</td>
+<td>Off</td>
+<td>Active</td>
+<td><p>Enabled <a href="searchrules?target=ZUNQLTMuNQ==&enabled=Enabled">search rules</a>: 1</p></td><td><a href='editzone?id=5'>View/Edit</a></td></tr>
+<tr>
+<td class="checkbox-cell" align="center" style="width:30px;"><input type="checkbox" name="selection[6]" value="6" onclick="form_update($(this.form));event.cancelBubble=true;"/></td><td><a href="editzone?id=6">iCP-3.5</a></td><td>Neighbor</td>
+<td>3</td>
+<td>8992 kbps</td>
+<td>Off</td>
+<td>Active</td>
+<td><p>Enabled <a href="searchrules?target=aUNQLTMuNQ==&enabled=Enabled">search rules</a>: 3</p></td><td><a href='editzone?id=6'>View/Edit</a></td></tr>
+<tr>
+<td class="checkbox-cell" align="center" style="width:30px;"><input type="checkbox" name="selection[7]" value="7" onclick="form_update($(this.form));event.cancelBubble=true;"/></td><td><a href="editzone?id=7">iCP-3.0</a></td><td>Neighbor</td>
+<td>0</td>
+<td>0 kbps</td>
+<td>Off</td>
+<td>Active</td>
+<td><p>No <a href="searchrules">search rules</a> configured</p></td><td><a href='editzone?id=7'>View/Edit</a></td></tr>
+</tbody></table>
+</div>
+</div>
+</div>
+<input type="hidden" name="cmd" value="" />
+<input type="hidden" name="returnto" value=""/>
+<input type="hidden" name="sessionid" value="219e4ac92ccef369f743e04b7835e675f15c8a95760ed9edc0d754b15e278afe" />
+<div id='zones_table_buttons'>
+<input type="submit" name="new" value="New" id="new" onclick="this.form.returnto.value='/zones'; this.form.cmd.value='new'" class="button" onmouseover="this.className='button-hover'" onmouseout="this.className='button'" />
+<input type="submit" name="btnCheckListener[delete]" value="Delete" onclick="return form_confirm(this.form,'Are you sure you want to delete the selected zone?',&quot;f=document.forms['zones_table'];f.returnto.value='/zones';f.cmd.value='delete';f.submit();&quot;,&quot;&quot;,&quot;Yes&quot;,&quot;No&quot;)" disabled="disabled"  class="button" onmouseover="this.className='button-hover'" onmouseout="this.className='button'" />
+<input type="submit" name="selectAll" id="selectAll" value="Select all" onclick="return set_all_DTF_checkboxes(this.form,1);" class="button" onmouseover="this.className='button-hover'" onmouseout="this.className='button'" />
+<input type="submit" name="btnCheckListener[unselectAll]" id="unselectAll" disabled="disabled" value="Unselect all" onclick="return set_all_DTF_checkboxes(this.form,0);" class="button" onmouseover="this.className='button-hover'" onmouseout="this.className='button'" />
+</div>
+</form>
+</div> <!-- content -->
+</div> <!-- ttFwContent -->
+<div class="ttFwFooter">
+<div class="container">
+      <div class="left">
+      <span class="label">User:</span>
+      <span class="value">tigao</span>
+      <span class="label">Access:</span>
+      <span class="value">Read-write</span>
+      <span class="label">System host name:</span>
+      <span>me01sqvce101</span>
+      <span class="label">System time:</span>
+      <span id="clock">00:00</span>
+      <span>PDT</span>
+</div>
+      <div class="right">
+         <span class="label" title="Language: en_US.utf8">Language:</span>
+         <span class="value" title="Language: en_US.utf8"><a href="webprefs">en_US</a></span>
+         <span class="label">S/N:</span>
+         <span class="value">02E277CA</span>
+         <span class="label">Version:</span>
+         <span class="value">X8.11.2</span>
+</div>
+</div>
+</div> <!-- ttFwFooter -->
+<div id="dlg-1-O" title="DIALOG TITLE" class="overlayContentContainer"></div><script type="text/javascript">
+//<![CDATA[
+
+setTimeout( function () {check_login();}, 30*60*1000);
+vcs.updateRequiredFields();
+//]]>
+</script>
+</body>
+</html>
+'''
+
+# soup = bs4(xml,'html.parser')
+# pprint(soup.find_all(name='a', attrs={'href':"editzone"}))
+
+
+# client_pattern_with_upgrade = re.compile(
+#         "(.*)\s* in\s* (dmz|local)\s* with\s* (server|pool)=(.*)\s* build=(.*) upgrade=(.*)", re.I)
+# incoming_msg = "page in local with pool=10.224.89.100 build=WBXpage.T33L-39.7.0 WBXpagecommon-39.7.0 upgrade=True"
+# p_result = client_pattern_with_upgrade.findall(incoming_msg)
+# print(p_result)
+
+CMCURL_MAPPING = {"QA": {"URL": "csgcmc.qa.webex.com",
+                         "KEY": "Q01DUUFfQVBJX0hGQ0lfa2V5OjdlMGRhNmU4ODk1MzRkMjQ4N2IwZjI4MzQ0OWIwM2Q4="},
+                  "DMZ": {"URL": "sjcmc.dmz.webex.com",
+                          "KEY": "Q01DQVBJX0RNWjo5M2IyOGNiNzQ4NjM0YmJmYTI4YWZkNWVhODQ2NGY3Mg=="},
+                  "ENG": {"URL": "sjcmc.eng.webex.com",
+                          "KEY": "Q01DUUFfQVBJX0hGTEFCX2tleTozZmJmYTkwNWZiODQ0ODZjOGVkNzg0MTcyYzFjNDE4NA=="}}
+#
+# class CMCInfo:
+#     def __init__(self, component, env):
+#         self.component = component
+#         self.env = env
+#         self.cmcurl = CMCURL_MAPPING.get(self.env).get("URL")
+#         self.key = CMCURL_MAPPING.get(self.env).get("KEY")
+#         self.headers = dict(Authorization=f"Basic {self.key}")
+#
+#     def getserverbypool(self, pool=None, filtertype=None):
+#         if pool is None:
+#             pool = self.pool
+#         box_url = 'https://%s/cmc/api/sitBoxList/%s/?pool=%s&ignore_owner=yes' % (self.cmcurl, self.component, pool)
+#         req = requests.get(box_url, headers=self.headers)
+#         ret = req.json().get('rows')
+#         # print(ret)
+#         if filtertype:
+#             servers = [{server.get('name'): server.get('ip')} for server in ret if
+#                        server.get('type') in filtertype]
+#         else:
+#             for server in ret:
+#                 yield server # {server.get('name'): server.get('ip')}
+#         #     servers = ({server.get('name'): server.get('ip')} for server in ret)
+#         # return servers
+#
+#
+# begin = time.time()
+# cmcinfo = CMCInfo('j2ee','DMZ')
+# ret = cmcinfo.getserverbypool('jsq1','j2eeweb,')
+#
+# #print(cmcinfo.getserverbypool('jsq1','j2eeweb,'))
+# for server in ret:
+#     if server.get('type') in 'j2eeweb,':
+#         print({server.get('name'): server.get('ip')})
+# end = time.time()
+# elapsed_time = end - begin
+# print("Elapsed time is %ss." % elapsed_time)
+#
+
+# from multiprocessing import Pool, Manager
+# manager = Manager()
+# workQueue = manager.Queue()
+# component_name='j2ee'
+# service_version='39.8.0'
+# build_no='0000'
+#
+# workQueue.put('-'.join([component_name,service_version,build_no]))
+# ret = workQueue.get()
+# print(ret)
+#
+#
+#
+# from fabric import Connection
+#
+# result = Connection('10.224.89.100',user='wbxroot',connect_kwargs={'password':'wbx@AaR00t'}).run('hostname',hide=False)
+# print(result)

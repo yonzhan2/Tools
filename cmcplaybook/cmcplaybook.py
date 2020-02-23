@@ -4,14 +4,14 @@ import time
 import re
 from multiprocessing import Pool, cpu_count
 
-cmcurl = "csgcmc.qa.webex.com"
-# cmcurl = "sjcmc.dmz.webex.com"
+# cmcurl = "csgcmc.qa.webex.com"
+cmcurl = "sjcmc.dmz.webex.com"
 
 ###QA CMC headers
-headers = {'Authorization': 'Basic Q01DUUFfQVBJX0hGQ0lfa2V5OjdlMGRhNmU4ODk1MzRkMjQ4N2IwZjI4MzQ0OWIwM2Q4='}
+#headers = {'Authorization': 'Basic Q01DUUFfQVBJX0hGQ0lfa2V5OjdlMGRhNmU4ODk1MzRkMjQ4N2IwZjI4MzQ0OWIwM2Q4='}
 
 ###SJ CMC headers
-#headers = {'Authorization': 'Basic Q01DQVBJX0RNWjo5M2IyOGNiNzQ4NjM0YmJmYTI4YWZkNWVhODQ2NGY3Mg=='}
+headers = {'Authorization': 'Basic Q01DQVBJX0RNWjo5M2IyOGNiNzQ4NjM0YmJmYTI4YWZkNWVhODQ2NGY3Mg=='}
 current_dir = os.path.dirname(__file__)
 start = time.time()
 
@@ -36,7 +36,7 @@ def generateconfig(poolname, service_version, build_no="0100"):
             "new_build_no": build_no}
     req = requests.post(url, data=data, headers=headers)
     ret = req.json()
-    time.sleep(2)
+    time.sleep(1)
     if ret["result"] == "0000":
         return "Success on %s " % poolname
     else:
@@ -81,7 +81,7 @@ tasks:
     filename = os.path.join(current_dir, 'logstashagent/configs/logstashagentplaybook_%s.yml' % poolname)
     with open(filename, 'w+') as f:
         f.write(playbook)
-    time.sleep(2)
+    time.sleep(1)
     files = {'playbook': open(filename, 'rb')}
     req = requests.post(url, files=files, headers=headers)
     os.remove(filename)
@@ -92,7 +92,7 @@ if __name__ == "__main__":
     pool = Pool(cpu_count())
     result = []
     service_version = "5.6.9"
-    build_no = "190510"
+    build_no = "199990"
     for pname in getpools():
         print("Generate config for %s " % pname)
         generateconfig(pname, service_version, build_no)

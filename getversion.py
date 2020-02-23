@@ -1,6 +1,5 @@
 #!/usr/local/bin/python3
 
-from __future__ import print_function as print
 __author__ = 'YongZhang'
 __version__ = '2.0.0'
 # coding:utf-8
@@ -49,7 +48,8 @@ cf = configparser.ConfigParser()
 cf.read(os.path.join(base_dir, 'hckconfig.properties'))
 secs = cf.sections()
 
-#print secs
+
+# print secs
 
 def IsCT7():
     if os.uname()[2].startswith('3'):
@@ -124,6 +124,7 @@ class ManipulateDataToMongo(object):
 ##Initialize Class
 m = ManipulateDataToMongo()
 
+
 class HealthCheck:
     "get the server's health check status via the parameter input"
 
@@ -134,7 +135,7 @@ class HealthCheck:
 
     def getStatus(self):
         try:
-            data = requests.get(self.hckurl, timeout=5)
+            data = requests.get(self.hckurl, verify=False, timeout=5)
             # print(f"data is {data.content.decode('utf-8')}")
             m_okokok = re.compile('OKOKOK', re.I)
             m_online = re.compile('online', re.I)
@@ -150,7 +151,6 @@ class HealthCheck:
             status[self.type] = 'NONONO'
             m.updatestatus(self.ip, "NONONO")
             return 'NONONO'
-
 
     def Telnet(self):
         try:
@@ -172,8 +172,9 @@ def GetpkgInfo(type, server):
 
     hostname = ""
     ipaddr = ""
-    for user, pwd in zip(['wbxbuilds'], ['P0w3rSupply!']):  # ['logs', 'wbxbuilds'], ['wbx@Aalogs', 'P0w3rSupply!'
-        #print user, pwd
+    for user, pwd in list(zip(['wbxbuilds', 'wbxroot'],
+                              ['P0w3rSupply!', 'wbx@AaR00t'])):  # ['logs', 'wbxbuilds'], ['wbx@Aalogs', 'P0w3rSupply!'
+        print(user, pwd)
         try:
             ssh.connect(server, username=user, password=pwd, timeout=5)
             stdin, stdout, stderr = ssh.exec_command(rpmcmd[type])
@@ -184,40 +185,40 @@ def GetpkgInfo(type, server):
         except Exception as e:
             print("error is ", e)
 
-    if type not in ('HIPPO', 'FLAMINGO', 'OTTER', 'WebAppNG', 'GlobalPageService', 'SignService'):
-        p1 = re.compile(r"Name : (.+?) Relocations:.+? Version :(.+?) Vendor: \(none\) Release : (.+?) Build Date")
-        p2 = re.compile(r"Build Date: (.+?) Install Date:")  ##Build Date
-        p3 = re.compile(r"Install Date: (.+?) Build Host:")  ##Install Date
-    else:
-        p1 = re.compile(r"Name : (.+?) Version :(.+?) Release : (.+?) Architecture")
-        p2 = re.compile(r"Build Date : (.+?) Build Host")  ##Build Date
-        p3 = re.compile(r"Install Date: (.+?) Group")  ##Install Date
+    output = stdout.read().decode('utf-8')
+    package = re.findall("Name : (.*?)\s", output)
+    release = re.findall("Version : (.*?)\s", output)
+    version = re.findall("Release : (.*?)\s", output)
 
-    with open(os.path.join(base_dir, 'stdout'), 'wb+') as f:
-        f.write(stdout.read())
-    with open(os.path.join(base_dir, 'stdout')) as fh:
-        f = fh.read()
-    #print("content of f:", f)
-    #print re.findall(p1, f)
-    p1_ret = re.findall(p1, f)
+    p1 = list(zip(package, release, version))
+    p2 = re.compile(r"Build Date\s*: (.*?\d{4})")
+    p3 = re.compile(r"Install Date\s*: (.*?\d{4})")
 
-    buildsinfo = ['{0}-{1}-{2}'.format(build[0].strip(), build[1].strip(), build[2].strip()) for build in p1_ret]
-    # print re.findall(p2, f)
-    #print re.findall(p3, f)
-    rpmdata = list(zip(buildsinfo, re.findall(p2, f), re.findall(p3, f)))
-    rpmdata_format = list(zip(buildsinfo, [timeConvert(buildate)[0] for buildate in re.findall(p2, f)],
-                              [timeConvert(deploydate)[0] for deploydate in re.findall(p3, f)]))
-    print(rpmdata)
+    if type in ('AppDBPatch',):
+        p2 = re.compile(r"Build Date\s*: (.+?\d{2}:\d{2}:\d{2})")
+        p3 = re.compile(r"Install Date\s*: (.+?\d{2}:\d{2}:\d{2})")
 
-    build = [line for line in sorted(rpmdata)]
+    print("#1.content of output:", output)
+
+    buildsinfo = ['{0}-{1}-{2}'.format(build[0].strip(), build[1].strip(), build[2].strip()) for build in p1]
+    build_data = re.findall(p2, output)
+    install_data = re.findall(p3, output)
+    print("build_data is {}, install_data is {}".format(build_data, install_data))
+    rpmdata = list(zip(buildsinfo, build_data, install_data))
+    rpmdata_format = list(zip(buildsinfo, [timeConvert(build)[0] for build in build_data],
+                              [timeConvert(install)[0] for install in install_data]))
+    print("rpmdata is ", rpmdata)
+
+    build = [line for line in sorted(rpmdata, key=lambda x: x[0].lower())]
     PkgDict[type] = {"build": build, "hostname": hostname, "ipaddr": ipaddr}
-    #print PkgDict
 
-    build = [line for line in sorted(rpmdata_format)]
+    build = [line for line in sorted(rpmdata_format, key=lambda x: x[0].lower())]
+    if not build:
+        build = [('N/A', 'N/A', 'N/A')]
     if not m.querydata(ipaddr):
         m.insertdata(env, type, build, hostname, ipaddr)
     else:
-        if not os.path.exists(_lock) and cur_hour in (0, 5):
+        if not os.path.exists(_lock) and cur_hour in (4, 22):
             m.updatelastbuild(ipaddr)
         m.updatedata(env, type, build, hostname, ipaddr)
 
@@ -233,7 +234,7 @@ def getDataFromJson(type, jsonfile=json_file):
         ipaddr = datadict["ipaddr"]
         build = datadict["build"]
 
-        return rows, hostname, ipaddr,build
+        return rows, hostname, ipaddr, build
 
 
 def SendMsgToSparkRoom(msg=None):
@@ -243,7 +244,7 @@ def SendMsgToSparkRoom(msg=None):
                'Authorization': 'Bearer YjU2MzJhOTMtZDIzYS00MjMyLThmM2EtYzVjZjhhMjk4YjQwMTEzOWU4ZGUtNmFi'}
     headers['User-Agent'] = useragent
     roomId = '74bf8974-9b33-3892-b1f0-914bb42d465f'  # test room
-    #roomId = 'ac617a80-24cb-11e7-a0ed-cf98f532c071' ##this is T32 Firedrill Room
+    # roomId = 'ac617a80-24cb-11e7-a0ed-cf98f532c071' ##this is T32 Firedrill Room
     data = {"roomId": roomId, "text": msg, "markdown": "**%s**" % msg}
     data = json.dumps(data)
     # print data
@@ -262,19 +263,18 @@ def timeConvert(s):
     try:
         timestruct = time.strptime(s, "%a %b %d %H:%M:%S %Y")
     except:
-        timestruct = time.strptime(s, "%a %d %b %Y %H:%M:%S %p GMT")
+        timestruct = time.strptime(s, "%a %d %b %Y %H:%M:%S")
     timeformat = time.strftime("%Y-%m-%d %H:%M:%S", timestruct)
     timestamp = time.mktime(timestruct)
     return timeformat, timestamp
 
 
 def writeHtmlHeader():
-
     if os.path.isfile(new_html):
         try:
             shutil.move(new_html, backup_file)
             # os.rename(new_html, old_html)
-            #d = os.popen('find {}/history -mtime +5 -exec rm -f {} \;'.format(base_dir))
+            # d = os.popen('find {}/history -mtime +5 -exec rm -f {} \;'.format(base_dir))
             d = os.popen('find %s/history -mtime +5 -exec rm -f {} \;' % base_dir)
         except:
             pass
@@ -308,7 +308,7 @@ def writeHtmlHeader():
                 <th>Service Status</th>
               </tr>
               '''.format('PRIMARY' if status.get('J2EE', 'NONONO') == 'OKOKOK' else 'GSB', report_date)
-)
+        )
 
 
 def writeHtmlBody(type):
@@ -318,14 +318,14 @@ def writeHtmlBody(type):
     def isChanged(build):
         old_build = (build[0] for build in getDataFromJson(type, base_jsonfile)[3])
 
-        #print "old_build is", old_build, "new build is" ,build
+        # print "old_build is", old_build, "new build is" ,build
         if build not in old_build:
             return color[1]
         else:
             return color[0]
 
     def isRunning(type):
-        if status.get(type, '') == 'OKOKOK' or status.get(type, '')  == '' :
+        if status.get(type, '') == 'OKOKOK' or status.get(type, '') == '':
             return color[0]
         else:
             return color[2]
@@ -334,7 +334,7 @@ def writeHtmlBody(type):
 
     try:
         firstbuild = builds[0][0]
-        #print "firstbuild is ",firstbuild
+        # print "firstbuild is ",firstbuild
     except:
         firstbuild = []
 
@@ -351,9 +351,10 @@ def writeHtmlBody(type):
                 <td rowspan="{0}" align="center" {6}>{7}</td>
              </tr>
 
-            '''.format(rows, type, hostname, ipaddr, isChanged(firstbuild), firstbuild, isRunning(type), status.get(type, ''),
-           timeConvert(builds[0][1])[0], timeConvert(builds[0][2])[0])
-)
+            '''.format(rows, type, hostname, ipaddr, isChanged(firstbuild), firstbuild, isRunning(type),
+                       status.get(type, ''),
+                       timeConvert(builds[0][1])[0], timeConvert(builds[0][2])[0])
+        )
     'If the length of build >1, write to file from the second entity'
     if len(builds) > 1:
         for build in builds[1:]:
@@ -367,7 +368,7 @@ def writeHtmlBody(type):
                         <td {2} >{3}</td>
                       </tr>
                     '''.format(timeConvert(build[1])[0], timeConvert(build[2])[0], isChanged(build[0]), build[0])
-)
+                )
 
     if status.get(type, '') != 'OKOKOK':
         # print getFailure(type)
@@ -377,7 +378,7 @@ def writeHtmlBody(type):
             if issend != 'Y':
                 if failure < max_failure:
                     SendMsgToSparkRoom(
-                        "[NONONO]{0}-{1} on hf3wd, Please Be Noticed! [link](http://pvc.qa.webex.com/versionlist.html)".format(
+                        "[NONONO]{0}-{1} on QA hf3wd, Please Be Noticed! [link](http://pvc.qa.webex.com/versionlist.html)".format(
                             type, ipaddr))
                     saveFailure(type)
                 else:
@@ -410,7 +411,6 @@ def saveFailure(type, issend='N'):
         pd = pickle.dump(failure_dict, open(failure, 'wb', True))
     except Exception as e:
         # print 'saveFailure failed ',e
-        # print 'saveFailure failed ',e
         pkobj = {}
         pkobj[type] = {'failure': 1, 'issend': issend}
         failure_dict.update(pkobj)
@@ -436,7 +436,7 @@ def writeHtmlTail():
             ''')
 
 
-def diffHtml(new,old):
+def diffHtml(new, old):
     def readfile(filename):
         with open(filename, 'rb') as f:
             text = f.read().splitlines()
@@ -451,11 +451,13 @@ def diffHtml(new,old):
     with open(diff_html, 'w+') as f:
         f.write(diff)
 
+
 def writeHtml():
-    writeHtmlHeader ()
+    writeHtmlHeader()
     for type in secs:
         writeHtmlBody(type)
-    writeHtmlTail ()
+    writeHtmlTail()
+
 
 def transferToCI():
     f = open(json_file)
@@ -475,19 +477,19 @@ def transferToCI():
     except:
         print('call api failed')
 
+
 if __name__ == "__main__":
     for type in secs:
-        hck = HealthCheck (type)
+        hck = HealthCheck(type)
         # print hck.ip,hck.rpmcmd,hck.hckurl
         print(type, hck.ip, hck.getStatus())
-    #print 'url status is %s' % status
+    # print 'url status is %s' % status
 
-    for type in 'AppDBPatch', 'DPL', 'RA', 'TahoeTS', 'TahoeTS2', 'WebACD', 'TSP':
-        hck = HealthCheck (type)
+    for type in 'AppDBPatch', 'DPL', 'RA', 'WebACD', 'TSP':
+        hck = HealthCheck(type)
         # print hck.ip,hck.rpmcmd,hck.hckurl
         print(type, hck.ip, hck.Telnet())
-    #print 'status is %s' % status
-
+    # print 'status is %s' % status
 
     for type in secs:
         server = cf.get(type, 'ip')
@@ -510,10 +512,10 @@ if __name__ == "__main__":
 
 
     def copyfile(source, destination):
-        if not os.path.isfile(_lock) :
+        if not os.path.isfile(_lock):
             try:
                 shutil.copy(source, destination)
-                #os.system('touch ' + _lock)
+                # os.system('touch ' + _lock)
             except:
                 pass
 
@@ -536,11 +538,11 @@ if __name__ == "__main__":
         os.system('rm -f ' + _lock)
 
     ###writehtml
-    #writeHtml()
+    # writeHtml()
 
     try:
         diffHtml(new_html, old_html)
     except:
         pass
 
-    #transferToCI()
+    transferToCI()

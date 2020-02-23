@@ -4,16 +4,16 @@ import time
 import re
 from threading import Lock
 import threading
-import pprint
+from pprint import pprint
 
 # cmcurl = "csgcmc.qa.webex.com"
-cmcurl = "sjcmc.eng.webex.com"
+cmcurl = "sjcmc.dmz.webex.com"
 
 ###QA CMC headers
 # headers = {'Authorization': 'Basic Q01DUUFfQVBJX0hGQ0lfa2V5OjdlMGRhNmU4ODk1MzRkMjQ4N2IwZjI4MzQ0OWIwM2Q4='}
 
 ###SJ CMC headers
-headers = {'Authorization': 'Basic Q01DVVNBUElfa2V5OjQ4ZGJkZDcwNjkzNzRjMzhhMGMyNGIyMTcxMWQzYTA2'}
+headers = {'Authorization': 'Basic Q01DQVBJX0RNWjo5M2IyOGNiNzQ4NjM0YmJmYTI4YWZkNWVhODQ2NGY3Mg=='}
 current_dir = os.path.dirname(__file__)
 start = time.time()
 iplist = []
@@ -38,7 +38,7 @@ def getPoolsIP(poolname):
     session.headers = headers
     req = session.get(url)
     ret = req.json().get('rows')
-    ips = [ip.get('ip') for ip in ret]
+    ips = [{ip.get('ip'): ip.get('name')} for ip in ret]
     iplist.extend(ips)
 
 
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     for i in range(len(threads)):
         threads[i].join()
     end = time.time() - start
-    pprint.pprint(iplist)
+    pprint(iplist)
     print("eclipsed time1: ", end)
 
     start2 = time.time()
@@ -60,3 +60,6 @@ if __name__ == "__main__":
         getPoolsIP(pool)
     end = time.time() - start2
     print("eclipsed time2: ", end)
+
+    # getPoolsIP('jsa1')
+    pprint(iplist)

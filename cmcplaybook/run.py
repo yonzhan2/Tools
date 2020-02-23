@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-import StringIO
+try:
+    from StringIO import StringIO  ## for Python 2
+except ImportError:
+    from io import StringIO  ## for Python 3
 import json
 import os, zipfile
 

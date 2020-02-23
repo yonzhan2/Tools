@@ -14,7 +14,7 @@ import argparse
 import getpass
 import pymongo
 
-HOST = "173.36.203.62"
+HOST = "173.37.49.29"
 
 
 def get_args():
@@ -47,6 +47,12 @@ def get_args():
                         required=True,
                         action='store',
                         help='Name of the VM you wish to make')
+
+    parser.add_argument('-t', '--server_type',
+                        required=False,
+                        action='store',
+                        default=None,
+                        help='Server Type of the VM')
 
     parser.add_argument('--template',
                         required=True,
@@ -247,14 +253,14 @@ class InsertDataToMongo(object):
     def __init__(self):
         pass
 
-    def insertdata(self, vmmacc, vmname):
+    def insertdata(self, vmmacc, vmname, servertype):
 
         try:
             client = pymongo.MongoClient("mongodb://{0}:2701/".format(HOST))
             mydb = client["vmdb"]
             mycoll = mydb["vminfo"]
 
-            mydict = {"vmmacc": vmmacc, "vmname": vmname}
+            mydict = {"vmmacc": vmmacc, "vmname": vmname, "servertype": servertype}
             mycoll.insert_one(mydict)
             print(("inserted done for %s" % vmname))
 
@@ -301,13 +307,11 @@ def main():
     for child in children:
         if child.name == args.vm_name:
             vmmacc = getvmmacc(child)
-            print(child.name)
-            print((dir(child.PowerOn)))
             print("Macc address is %s" % vmmacc)
             break
 
     idtm = InsertDataToMongo()
-    idtm.insertdata(vmmacc, args.vm_name)
+    idtm.insertdata(vmmacc, args.vm_name, args.server_type)
 
     ##vm poweron
     task = [vm.PowerOn() for vm in children if vm.name == args.vm_name]

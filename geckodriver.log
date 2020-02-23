@@ -1,0 +1,153 @@
+1571819716139	geckodriver	INFO	Listening on 127.0.0.1:57488
+1571819717386	geckodriver::marionette	INFO	Starting browser /Applications/Firefox.app/Contents/MacOS/firefox-bin with args ["-marionette"]
+1571819718458	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: mozillaAddons
+1571819718458	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: telemetry
+1571819718458	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: resource://pdf.js/
+1571819718458	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: about:reader*
+1571819718577	Marionette	TRACE	Received observer notification profile-after-change
+1571819719062	Marionette	TRACE	Received observer notification command-line-startup
+1571819719062	Marionette	TRACE	Received observer notification nsPref:changed
+1571819719063	Marionette	DEBUG	Init aborted (running=false, enabled=true, finalUIStartup=false)
+1571819719494	Marionette	TRACE	Received observer notification toplevel-window-ready
+1571819722714	Marionette	TRACE	Received observer notification marionette-startup-requested
+1571819722714	Marionette	TRACE	Waiting until startup recorder finished recording startup scripts...
+1571819722725	Marionette	TRACE	All scripts recorded.
+1571819722725	Marionette	DEBUG	Setting recommended pref app.normandy.api_url to 
+1571819722726	Marionette	DEBUG	Setting recommended pref app.update.disabledForTesting to true
+1571819722726	Marionette	DEBUG	Setting recommended pref browser.contentblocking.introCount to 99
+1571819722727	Marionette	DEBUG	Setting recommended pref browser.safebrowsing.passwords.enabled to false
+1571819722727	Marionette	DEBUG	Setting recommended pref browser.tabs.remote.separatePrivilegedContentProcess to false
+1571819722727	Marionette	DEBUG	Setting recommended pref browser.tabs.unloadOnLowMemory to false
+1571819722727	Marionette	DEBUG	Setting recommended pref browser.urlbar.suggest.searches to false
+1571819722728	Marionette	DEBUG	Setting recommended pref datareporting.policy.dataSubmissionPolicyAccepted to false
+1571819722729	Marionette	DEBUG	Setting recommended pref dom.disable_beforeunload to true
+1571819722729	Marionette	DEBUG	Setting recommended pref dom.file.createInChild to true
+1571819722729	Marionette	DEBUG	Setting recommended pref dom.push.connection.enabled to false
+1571819722729	Marionette	DEBUG	Setting recommended pref privacy.trackingprotection.enabled to false
+1571819722730	Marionette	DEBUG	Setting recommended pref security.certerrors.mitm.priming.enabled to false
+1571819722730	Marionette	DEBUG	Setting recommended pref toolkit.cosmeticAnimations.enabled to false
+1571819722807	Marionette	INFO	Listening on port 57499
+1571819722807	Marionette	DEBUG	Remote service is active
+1571819723130	Marionette	DEBUG	Accepted connection 0 from 127.0.0.1:57610
+1571819723241	Marionette	DEBUG	0 -> [0,1,"newSession",{"acceptInsecureCerts":true,"browserName":"firefox","capabilities":{"desiredCapabilities":{"acceptInsecureCerts":true,"browserName":"firefox"}}}]
+1571819723241	Marionette	DEBUG	0 <- [1,1,{"error":"unknown command","message":"newSession","stacktrace":"WebDriverError@chrome://marionette/content/error.js:175: ... t@chrome://marionette/content/server.js:249:9\n_onJSONObjectReady/<@chrome://marionette/content/transport.js:503:20\n"},null]
+1571819723332	Marionette	DEBUG	Closed connection 0
+1571819972637	Marionette	TRACE	Received observer notification xpcom-will-shutdown
+1571819972638	Marionette	DEBUG	Resetting recommended pref app.normandy.api_url
+1571819972638	Marionette	DEBUG	Resetting recommended pref app.update.disabledForTesting
+1571819972638	Marionette	DEBUG	Resetting recommended pref browser.contentblocking.introCount
+1571819972638	Marionette	DEBUG	Resetting recommended pref browser.safebrowsing.passwords.enabled
+1571819972638	Marionette	DEBUG	Resetting recommended pref browser.tabs.remote.separatePrivilegedContentProcess
+1571819972638	Marionette	DEBUG	Resetting recommended pref browser.tabs.unloadOnLowMemory
+1571819972638	Marionette	DEBUG	Resetting recommended pref browser.urlbar.suggest.searches
+1571819972639	Marionette	DEBUG	Resetting recommended pref datareporting.policy.dataSubmissionPolicyAccepted
+1571819972639	Marionette	DEBUG	Resetting recommended pref dom.disable_beforeunload
+1571819972639	Marionette	DEBUG	Resetting recommended pref dom.file.createInChild
+1571819972640	Marionette	DEBUG	Resetting recommended pref dom.push.connection.enabled
+1571819972640	Marionette	DEBUG	Resetting recommended pref privacy.trackingprotection.enabled
+1571819972640	Marionette	DEBUG	Resetting recommended pref security.certerrors.mitm.priming.enabled
+1571819972640	Marionette	DEBUG	Resetting recommended pref toolkit.cosmeticAnimations.enabled
+1571819972641	Marionette	INFO	Stopped listening on port 57499
+1571819972641	Marionette	DEBUG	Remote service is inactive
+1571819993738	geckodriver	INFO	Listening on 127.0.0.1:57772
+1571819993869	geckodriver::marionette	INFO	Starting browser /Applications/Firefox.app/Contents/MacOS/firefox-bin with args ["-marionette"]
+1571819994876	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: mozillaAddons
+1571819994877	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: telemetry
+1571819994878	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: resource://pdf.js/
+1571819994878	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: about:reader*
+1571819995385	Marionette	TRACE	Received observer notification profile-after-change
+1571819995531	Marionette	TRACE	Received observer notification command-line-startup
+1571819995531	Marionette	TRACE	Received observer notification nsPref:changed
+1571819995531	Marionette	DEBUG	Init aborted (running=false, enabled=true, finalUIStartup=false)
+1571819995792	Marionette	TRACE	Received observer notification toplevel-window-ready
+1571819998122	Marionette	TRACE	Received observer notification marionette-startup-requested
+1571819998122	Marionette	TRACE	Waiting until startup recorder finished recording startup scripts...
+1571819998131	Marionette	TRACE	All scripts recorded.
+1571819998131	Marionette	DEBUG	Setting recommended pref app.normandy.api_url to 
+1571819998131	Marionette	DEBUG	Setting recommended pref app.update.disabledForTesting to true
+1571819998131	Marionette	DEBUG	Setting recommended pref browser.contentblocking.introCount to 99
+1571819998132	Marionette	DEBUG	Setting recommended pref browser.safebrowsing.passwords.enabled to false
+1571819998132	Marionette	DEBUG	Setting recommended pref browser.tabs.remote.separatePrivilegedContentProcess to false
+1571819998132	Marionette	DEBUG	Setting recommended pref browser.tabs.unloadOnLowMemory to false
+1571819998132	Marionette	DEBUG	Setting recommended pref browser.urlbar.suggest.searches to false
+1571819998133	Marionette	DEBUG	Setting recommended pref datareporting.policy.dataSubmissionPolicyAccepted to false
+1571819998133	Marionette	DEBUG	Setting recommended pref dom.disable_beforeunload to true
+1571819998133	Marionette	DEBUG	Setting recommended pref dom.file.createInChild to true
+1571819998134	Marionette	DEBUG	Setting recommended pref dom.push.connection.enabled to false
+1571819998134	Marionette	DEBUG	Setting recommended pref privacy.trackingprotection.enabled to false
+1571819998134	Marionette	DEBUG	Setting recommended pref security.certerrors.mitm.priming.enabled to false
+1571819998134	Marionette	DEBUG	Setting recommended pref toolkit.cosmeticAnimations.enabled to false
+1571819998191	Marionette	INFO	Listening on port 57783
+1571819998191	Marionette	DEBUG	Remote service is active
+1571819998282	Marionette	DEBUG	Accepted connection 0 from 127.0.0.1:57875
+1571819998286	Marionette	DEBUG	0 -> [0,1,"newSession",{"acceptInsecureCerts":true,"browserName":"firefox","capabilities":{"desiredCapabilities":{"acceptInsecureCerts":true,"browserName":"firefox"}}}]
+1571819998287	Marionette	DEBUG	0 <- [1,1,{"error":"unknown command","message":"newSession","stacktrace":"WebDriverError@chrome://marionette/content/error.js:175: ... t@chrome://marionette/content/server.js:249:9\n_onJSONObjectReady/<@chrome://marionette/content/transport.js:503:20\n"},null]
+1571819998329	Marionette	DEBUG	Closed connection 0
+1571820044178	geckodriver	INFO	Listening on 127.0.0.1:57905
+1571820045288	geckodriver::marionette	INFO	Starting browser /Applications/Firefox.app/Contents/MacOS/firefox-bin with args ["-marionette"]
+1571820045969	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: mozillaAddons
+1571820045970	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: telemetry
+1571820045970	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: resource://pdf.js/
+1571820045970	addons.webextension.screenshots@mozilla.org	WARN	Loading extension 'screenshots@mozilla.org': Reading manifest: Invalid extension permission: about:reader*
+1571820046099	Marionette	TRACE	Received observer notification profile-after-change
+1571820046387	Marionette	TRACE	Received observer notification command-line-startup
+1571820046387	Marionette	TRACE	Received observer notification nsPref:changed
+1571820046388	Marionette	DEBUG	Init aborted (running=false, enabled=true, finalUIStartup=false)
+1571820046789	Marionette	TRACE	Received observer notification toplevel-window-ready
+1571820048775	Marionette	TRACE	Received observer notification marionette-startup-requested
+1571820048776	Marionette	TRACE	Waiting until startup recorder finished recording startup scripts...
+1571820048786	Marionette	TRACE	All scripts recorded.
+1571820048786	Marionette	DEBUG	Setting recommended pref app.normandy.api_url to 
+1571820048787	Marionette	DEBUG	Setting recommended pref app.update.disabledForTesting to true
+1571820048787	Marionette	DEBUG	Setting recommended pref browser.contentblocking.introCount to 99
+1571820048788	Marionette	DEBUG	Setting recommended pref browser.safebrowsing.passwords.enabled to false
+1571820048788	Marionette	DEBUG	Setting recommended pref browser.tabs.remote.separatePrivilegedContentProcess to false
+1571820048788	Marionette	DEBUG	Setting recommended pref browser.tabs.unloadOnLowMemory to false
+1571820048788	Marionette	DEBUG	Setting recommended pref browser.urlbar.suggest.searches to false
+1571820048789	Marionette	DEBUG	Setting recommended pref datareporting.policy.dataSubmissionPolicyAccepted to false
+1571820048790	Marionette	DEBUG	Setting recommended pref dom.disable_beforeunload to true
+1571820048790	Marionette	DEBUG	Setting recommended pref dom.file.createInChild to true
+1571820048790	Marionette	DEBUG	Setting recommended pref dom.push.connection.enabled to false
+1571820048790	Marionette	DEBUG	Setting recommended pref privacy.trackingprotection.enabled to false
+1571820048790	Marionette	DEBUG	Setting recommended pref security.certerrors.mitm.priming.enabled to false
+1571820048790	Marionette	DEBUG	Setting recommended pref toolkit.cosmeticAnimations.enabled to false
+1571820048853	Marionette	INFO	Listening on port 57919
+1571820048854	Marionette	DEBUG	Remote service is active
+1571820048896	Marionette	DEBUG	Accepted connection 0 from 127.0.0.1:57996
+1571820048899	Marionette	DEBUG	0 -> [0,1,"newSession",{"acceptInsecureCerts":true,"browserName":"firefox","capabilities":{"desiredCapabilities":{"acceptInsecureCerts":true,"browserName":"firefox"}}}]
+1571820048899	Marionette	DEBUG	0 <- [1,1,{"error":"unknown command","message":"newSession","stacktrace":"WebDriverError@chrome://marionette/content/error.js:175: ... t@chrome://marionette/content/server.js:249:9\n_onJSONObjectReady/<@chrome://marionette/content/transport.js:503:20\n"},null]
+1571820048949	Marionette	DEBUG	Closed connection 0
+1571820060360	Marionette	TRACE	Received observer notification xpcom-will-shutdown
+1571820060360	Marionette	DEBUG	Resetting recommended pref app.normandy.api_url
+1571820060360	Marionette	DEBUG	Resetting recommended pref app.update.disabledForTesting
+1571820060360	Marionette	DEBUG	Resetting recommended pref browser.contentblocking.introCount
+1571820060360	Marionette	DEBUG	Resetting recommended pref browser.safebrowsing.passwords.enabled
+1571820060360	Marionette	DEBUG	Resetting recommended pref browser.tabs.remote.separatePrivilegedContentProcess
+1571820060360	Marionette	DEBUG	Resetting recommended pref browser.tabs.unloadOnLowMemory
+1571820060360	Marionette	DEBUG	Resetting recommended pref browser.urlbar.suggest.searches
+1571820060361	Marionette	DEBUG	Resetting recommended pref datareporting.policy.dataSubmissionPolicyAccepted
+1571820060361	Marionette	DEBUG	Resetting recommended pref dom.disable_beforeunload
+1571820060361	Marionette	DEBUG	Resetting recommended pref dom.file.createInChild
+1571820060362	Marionette	DEBUG	Resetting recommended pref dom.push.connection.enabled
+1571820060362	Marionette	DEBUG	Resetting recommended pref privacy.trackingprotection.enabled
+1571820060362	Marionette	DEBUG	Resetting recommended pref security.certerrors.mitm.priming.enabled
+1571820060362	Marionette	DEBUG	Resetting recommended pref toolkit.cosmeticAnimations.enabled
+1571820060362	Marionette	INFO	Stopped listening on port 57783
+1571820060362	Marionette	DEBUG	Remote service is inactive
+1571820064314	Marionette	TRACE	Received observer notification xpcom-will-shutdown
+1571820064315	Marionette	DEBUG	Resetting recommended pref app.normandy.api_url
+1571820064315	Marionette	DEBUG	Resetting recommended pref app.update.disabledForTesting
+1571820064315	Marionette	DEBUG	Resetting recommended pref browser.contentblocking.introCount
+1571820064315	Marionette	DEBUG	Resetting recommended pref browser.safebrowsing.passwords.enabled
+1571820064315	Marionette	DEBUG	Resetting recommended pref browser.tabs.remote.separatePrivilegedContentProcess
+1571820064315	Marionette	DEBUG	Resetting recommended pref browser.tabs.unloadOnLowMemory
+1571820064315	Marionette	DEBUG	Resetting recommended pref browser.urlbar.suggest.searches
+1571820064316	Marionette	DEBUG	Resetting recommended pref datareporting.policy.dataSubmissionPolicyAccepted
+1571820064316	Marionette	DEBUG	Resetting recommended pref dom.disable_beforeunload
+1571820064316	Marionette	DEBUG	Resetting recommended pref dom.file.createInChild
+1571820064317	Marionette	DEBUG	Resetting recommended pref dom.push.connection.enabled
+1571820064317	Marionette	DEBUG	Resetting recommended pref privacy.trackingprotection.enabled
+1571820064317	Marionette	DEBUG	Resetting recommended pref security.certerrors.mitm.priming.enabled
+1571820064317	Marionette	DEBUG	Resetting recommended pref toolkit.cosmeticAnimations.enabled
+1571820064317	Marionette	INFO	Stopped listening on port 57919
+1571820064317	Marionette	DEBUG	Remote service is inactive

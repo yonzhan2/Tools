@@ -1,0 +1,116 @@
+---
+component:
+  appdbpatch:
+    version:
+      40.3.0:0000
+
+  j2ee:
+    version:
+      40.4.0:0000
+
+  meetingjoinservice:
+    version:
+      2.21.0:0100
+
+  meetingregistryservice:
+    version:
+      40.4.0:0100
+
+  clustermrs:
+    version:
+      40.4.0:0100
+
+  webng:
+    version:
+      40.4.0:0100
+
+  reminder:
+    version:
+      40.4.0:7000
+
+  authentication:
+    version:
+      40.4.0:7000
+
+  superadmin:
+    version:
+      40.4.0:0000
+
+  eureka:
+    version:
+      7.2.0:7000
+
+  mmp:
+    version:
+      7.2.0:0000
+
+  nbr:
+    version:
+      4.16.0:0000
+
+  nbrss:
+    version:
+      2.4.0:7000
+  tahoe:
+    version:
+      6.2.0:0000
+
+  cms:
+    version:
+      4.2.0:0000
+
+  audioclips:
+    version:
+      3.1.0:0000
+
+  tpgw:
+    version:
+      7.2.0:7000
+
+  givr:
+    version:
+      6.1.0:0000
+
+  xmlapi:
+    version:
+      40.4.0:0000
+
+  gla:
+    version:
+      40.4.0:0000
+
+  csp:
+    version:
+      3.0.0:0000
+
+  globalpageservice:
+    version:
+      40.2.0:0100
+
+  calendarservice:
+    version:
+      40.1.0:0000
+
+  notificationservice:
+    version:
+      1.10.0:0000
+
+  addin:
+    version:
+      40.1.0:0100
+
+  signservice:
+    version:
+      1.2.0:0100
+
+  tsp:
+    version:
+      3.31.0:0000
+
+  ivrmgr:
+    version:
+      1.12.0:0000
+
+  aibridgeservice:
+    version:
+      1.0.0:0000

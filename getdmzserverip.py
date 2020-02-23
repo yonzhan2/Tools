@@ -7,7 +7,7 @@ import threading
 import re
 
 cmcurl = "sjcmc.dmz.webex.com"
-headers = {'Authorization': 'Basic Q01DQVBJX0RNWl9rZXk6MGE1ZGJhYTFmY2E5NGVhZThiYTE4YzIzZDYyZmI3Yzg='}
+headers = {'Authorization': 'Basic Q01DQVBJX0RNWjo5M2IyOGNiNzQ4NjM0YmJmYTI4YWZkNWVhODQ2NGY3Mg=='}
 
 ##current_dir = os.path.dirname(__file__)
 
@@ -27,8 +27,12 @@ def get_pool_lists():
     global pool_lists
     pool_lists = [cld['name'] for child in ret for cld in child['children']]
     ### filter TA pool_lists
-    pool_lists = [pool for pool in pool_lists if not re.search("ta|pj|pf|px|py|sd|bala", pool)]
+    pool_lists = [pool for pool in pool_lists if not re.search("ta|pj|pf|px|py|sd|bala|fd", pool)]
+    print("pools", pool_lists)
     return pool_lists
+
+
+get_pool_lists()
 
 
 def get_ip():
@@ -43,9 +47,9 @@ def get_ip():
             url = 'https://%s/cmc/api/sitBoxList/logstashagent/?pool=%s&ignore_owner=yes' % (cmcurl, pool)
             req = requests.get(url, headers=headers)
             res = req.json()
-            #           print(res)
+            # print(res)
             rows = res.get("rows")
-            # print(rows)
+            #print(rows)
             ip_lists.extend([rec.get('ip') for rec in rows])
 
 
@@ -57,12 +61,15 @@ def sync_time_with_gateway():
             gLock.release()
             break
         else:
+            print(ip_lists)
             server = ip_lists.pop()
             gLock.release()
             print("Sync Server %s" % server)
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             ntp_sync_cmd = '''
+                            sudo sed -i 's/prod/qa/g' /var/webex/version/build_info.txt
+                            sudo rm -f /etc/yum.repos.d/prod*
                             sudo sed -i 's/maxskew=100/maxskew=100000000/g' /usr/local/bin/ntpchk.sh
                             sudo service ntpd stop > /dev/null 2>&1
                             sudo ntpdate `sudo route -n | grep ^0.0.0.0 | awk '{print $2}'` > /dev/null 2>&1
@@ -94,9 +101,11 @@ if __name__ == '__main__':
         th = threading.Thread(target=get_ip)
         # th.setDaemon(True)
         th.start()
+        th.join()
 
     ###Consumer
     for i in range(4):
         th = threading.Thread(target=sync_time_with_gateway)
         # th.setDaemon(True)
         th.start()
+        th.join()

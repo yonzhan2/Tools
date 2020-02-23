@@ -1,5 +1,5 @@
 #!/bin/bash
-function isct74()
+function isct7x()
 {
 grep -o "CentOS Linux release 7.*" /etc/redhat-release  > /dev/null
 if [ $(echo $?) -eq 0 ];then
@@ -9,7 +9,7 @@ else
 fi
 }
 
-if isct74 ; then
+if isct7x ; then
     echo "net.ipv6.conf.all.disable_ipv6=1" >> /etc/sysctl.conf
     echo "net.ipv6.conf.default.disable_ipv6=1" >> /etc/sysctl.conf
     sysctl -p

@@ -3,43 +3,42 @@ import os
 import time
 from multiprocessing import Pool, Manager, cpu_count
 from yaml import load
+import re
 
-CMCURL_MAPPING = {"QA": {"URL": "csgcmc.qa.webex.com",
-                         "KEY": "Q01DUUFfQVBJX0hGQ0lfa2V5OjdlMGRhNmU4ODk1MzRkMjQ4N2IwZjI4MzQ0OWIwM2Q4="},
-                  "DMZ": {"URL": "sjcmc.dmz.webex.com",
-                          "KEY": "Q01DQVBJX0RNWjo5M2IyOGNiNzQ4NjM0YmJmYTI4YWZkNWVhODQ2NGY3Mg=="},
-                  "ENG": {"URL": "sjcmc.eng.webex.com",
-                          "KEY": "Q01DQVBJX0VOR19rZXk6YmFkMGE4MjQ3Zjg0NGVkMWE0ZmQ2MzlhNTcwNzM5Y2I="}
-                  }
+# cmcurl = "csgcmc.qa.webex.com"
+cmcurl = "sjcmc.dmz.webex.com"
 
-# env = "qa"
-env = "dmz"
+###QA CMC headers
+# headers = {'Authorization': 'Basic Q01DUUFfQVBJX0hGQ0lfa2V5OjdlMGRhNmU4ODk1MzRkMjQ4N2IwZjI4MzQ0OWIwM2Q4='}
 
-cmcurl = CMCURL_MAPPING.get(env.upper()).get("URL")
-headers = {'Authorization': f'Basic {CMCURL_MAPPING.get(env.upper()).get("KEY")}'}
+###SJ CMC headers
+headers = {'Authorization': 'Basic Q01DQVBJX0RNWjo5M2IyOGNiNzQ4NjM0YmJmYTI4YWZkNWVhODQ2NGY3Mg=='}
+
+if re.search("csgcmc", cmcurl):
+    env = "qa"
+else:
+    env = "dmz"
 
 current_dir = os.path.dirname(__file__)
 start = time.time()
 
 
-class GetData:
+class GetData():
     def __init__(self, cmcmapping_file):
-        self.pool_data = load(open(cmcmapping_file))
-        self.version_data = load(open('cmcversion.yml'))
-        self.pool_component = self.pool_data.get('component')
-        self.version_component = self.version_data.get('component')
+        self.data = load(open(cmcmapping_file))
+        self.component = self.data.get('component')
 
     def getcomponent(self):
-        component_name = [name for name in self.pool_component.keys()]
+        component_name = [name for name in self.component.keys()]
         return component_name
 
     def getpool(self, component):
-        pools = self.pool_component.get(component).get('pools')
-        #pools = [pool for pool in pools if  re.search("hf|sz|ak", pool)]
+        pools = self.component.get(component).get('pools')
+        # pools = [pool for pool in pools if  re.search("hf|sz|ak", pool)]
         return pools
 
     def getversion(self, component):
-        version = self.version_component.get(component).get('version')
+        version = self.component.get(component).get('version')
         return version
 
 
@@ -50,7 +49,7 @@ def generateconfig(component, poolname, service_version, build_no="0100"):
     req = requests.post(url, data=data, headers=headers)
     ret = req.json()
     # print(ret,component,poolname)
-    time.sleep(1)
+    time.sleep(2)
     if ret["result"] == "0000":
         return "Success on %s-%s " % (component, poolname)
     else:
@@ -70,7 +69,7 @@ component: %s
 
 variables:
   pool: %s
-  
+
   version: %s-%s
 
 tasks:
@@ -114,26 +113,9 @@ tasks:
     return req.text
 
 
-def upgrade_task(workqueue, index):
-    process_id = "Process-" + str(index)
-    while not workqueue.empty():
-        print(f"qsize is {workQueue.qsize()}")
-        parameter_split = workQueue.get(timeout=2)
-        print(f"get parameters {parameter_split}")
-        try:
-            component_name, pname, service_version, build_no = parameter_split.split('-')
-            print("Generate config for %s-%s " % (component_name, pname))
-            generateconfig(component_name, pname, service_version, build_no)
-            print("Deploy pool for %s-%s " % (component_name, pname))
-            upgradewithplaybook(component_name, pname, service_version, build_no)
-            print(process_id, workqueue.qsize(), parameter_split)
-        except Exception as e:
-            print(process_id, workqueue.qsize(), parameter_split, "Error happened", e)
-
-
 if __name__ == "__main__":
     getdata = GetData(f'cmcmapping_{env}.yml')
-    print(getdata.pool_component)
+    print(getdata.component)
     result = []
 
     manager = Manager()
@@ -141,7 +123,7 @@ if __name__ == "__main__":
 
     for component_name in getdata.getcomponent():
 
-        service_version, build_no = getdata.getversion(component_name).split(':')
+        service_version, build_no = getdata.getversion(component_name).split('-')
         print(component_name, service_version, build_no)
 
         for pname in getdata.getpool(component_name):

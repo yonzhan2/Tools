@@ -23,7 +23,7 @@ class MyThread(threading.Thread):
 
     def run(self):
         print("Starting " + self.name)
-        while True:
+        while not self.q.empty():
             try:
                 # print("Debug", self.name, self.q)
                 crawler(self.name, self.q)
@@ -42,19 +42,20 @@ def crawler(threadName, q):
         print(q.qsize(), threadName, "Error", e)
 
 
-threadList = ["Thread-1", "Thread-2", "Thread-3", "Thread-4", "Thread-5", ]
+threadList = ["Thread-1", "Thread-2", "Thread-3", "Thread-4", "Thread-5", "Thread-6", "Thread-7", "Thread-8",
+              "Thread-9", "Thread-10"]
 workQueue = Queue.Queue(1000)
 threads = []
+
+##fill up with queue
+for url in link_list:
+    workQueue.put(url)
 
 ##create new thread
 for tName in threadList:
     thread = MyThread(tName, workQueue)
     thread.start()
     threads.append(thread)
-
-##fill up with queue
-for url in link_list:
-    workQueue.put(url)
 
 ##wait for all of threads finished
 for t in threads:
